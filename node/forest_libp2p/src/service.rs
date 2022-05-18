@@ -50,6 +50,7 @@ pub const PUBSUB_MSG_STR: &str = "/fil/msgs";
 const PUBSUB_TOPICS: [&str; 2] = [PUBSUB_BLOCK_STR, PUBSUB_MSG_STR];
 
 /// Events emitted by this Service.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug)]
 pub enum NetworkEvent {
     PubsubMessage {
@@ -72,6 +73,7 @@ pub enum NetworkEvent {
 }
 
 /// Message types that can come over GossipSub
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone)]
 pub enum PubsubMessage {
     /// Messages that come over the block topic
@@ -362,8 +364,8 @@ where
                                         warn!("Failed to connect to a peer");
                                     }
                                 }
-                                NetRPCMethods::NetDisconnect(response_channel, _peer_id) => {
-                                    warn!("NetDisconnect API not yet implmeneted"); // TODO: implement NetDisconnect - See #1181
+                                NetRPCMethods::NetDisconnect(response_channel, peer_id) => {
+                                    let _ = Swarm::disconnect_peer_id(swarm_stream.get_mut(), peer_id);
 
                                     if response_channel.send(()).is_err() {
                                         warn!("Failed to disconnect from a peer");
@@ -376,7 +378,7 @@ where
                 },
                 interval_event = interval.next() => if interval_event.is_some() {
                     // Print peer count on an interval.
-                    info!("Peers connected: {}", swarm_stream.get_mut().behaviour_mut().peers().len());
+                    debug!("Peers connected: {}", swarm_stream.get_mut().behaviour_mut().peers().len());
                 }
             };
         }

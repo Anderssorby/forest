@@ -16,6 +16,19 @@ pub struct ActorError {
     exit_code: ExitCode,
     /// Message for debugging purposes,
     msg: String,
+    /// Is this a recovered error.
+    recovered: bool,
+}
+
+impl From<fvm::executor::ApplyFailure> for ActorError {
+    fn from(ret: fvm::executor::ApplyFailure) -> Self {
+        ActorError {
+            fatal: true,
+            exit_code: ExitCode::Ok,
+            msg: ret.to_string(),
+            recovered: false,
+        }
+    }
 }
 
 impl ActorError {
@@ -24,6 +37,7 @@ impl ActorError {
             fatal: false,
             exit_code,
             msg,
+            recovered: false,
         }
     }
 
@@ -32,12 +46,27 @@ impl ActorError {
             fatal: true,
             exit_code: ExitCode::ErrPlaceholder,
             msg,
+            recovered: false,
+        }
+    }
+
+    pub fn new_recovered(exit_code: ExitCode, msg: String) -> Self {
+        Self {
+            fatal: false,
+            exit_code,
+            msg,
+            recovered: true,
         }
     }
 
     /// Returns true if error is fatal.
     pub fn is_fatal(&self) -> bool {
         self.fatal
+    }
+
+    /// Returns true if error is recovered.
+    pub fn is_recovered(&self) -> bool {
+        self.recovered
     }
 
     /// Returns the exit code of the error.
@@ -68,6 +97,7 @@ impl From<EncodingError> for ActorError {
             fatal: false,
             exit_code: ExitCode::ErrSerialization,
             msg: e.to_string(),
+            recovered: false,
         }
     }
 }
@@ -78,6 +108,7 @@ impl From<CborError> for ActorError {
             fatal: false,
             exit_code: ExitCode::ErrSerialization,
             msg: e.to_string(),
+            recovered: false,
         }
     }
 }
@@ -89,6 +120,11 @@ macro_rules! actor_error {
     ( fatal($msg:expr) ) => { ActorError::new_fatal($msg.to_string()) };
     ( fatal($msg:literal $(, $ex:expr)+) ) => {
         ActorError::new_fatal(format!($msg, $($ex,)*))
+    };
+
+    // Recovered Errors
+    ( recovered($code:ident, $msg:expr ) ) => {
+        ActorError::new_recovered(ExitCode::$code, $msg.to_string())
     };
 
     // Error with only one stringable expression

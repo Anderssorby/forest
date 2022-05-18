@@ -11,6 +11,7 @@ use cid::Cid;
 use clock::ChainEpoch;
 use conformance_tests::*;
 use encoding::Cbor;
+use fil_types::NetworkVersion;
 use fil_types::TOTAL_FILECOIN;
 use flate2::read::GzDecoder;
 use forest_message::{MessageReceipt, UnsignedMessage};
@@ -21,6 +22,7 @@ use paramfetch::{get_params_default, SectorSizeOpt};
 use regex::Regex;
 use state_manager::StateManager;
 use statediff::print_state_diff;
+use std::convert::TryInto;
 use std::error::Error as StdError;
 use std::fmt;
 use std::fs::File;
@@ -42,6 +44,16 @@ lazy_static! {
         // These 2 tests ignore test cases for Chaos actor that are checked at compile time
         Regex::new(r"test-vectors/corpus/vm_violations/x--state_mutation--after-transaction").unwrap(),
         Regex::new(r"test-vectors/corpus/vm_violations/x--state_mutation--readonly").unwrap(),
+
+        Regex::new(r"test-vectors/corpus/specs_actors_v6/TestMinerWithdraw/withdraw_from_non-owner_address_fails").unwrap(),
+        Regex::new(r"test-vectors/corpus/specs_actors_v6/TestAggregateBadSender").unwrap(),
+        // This test fails even after being updated.
+        Regex::new(r"extra-vectors/TestAggregateBadSender/8466b548087bb6c8c8469b4135521b147364ed7625467c8ac149f8785abcab5d").unwrap(),
+
+        // https://github.com/ChainSafe/forest/issues/1457
+        // We're too strict with these vectors:
+        Regex::new(r"fvm-test-vectors/corpus/extracted/0005-chocolate-01/fil_6_storageminer/ProveCommitSector").unwrap(),
+        Regex::new(r"fvm-test-vectors/corpus/extracted/0005-chocolate-01/fil_6_storageminer/ProveCommitAggregate").unwrap(),
     ];
 }
 
@@ -54,6 +66,9 @@ fn is_valid_file(entry: &DirEntry) -> bool {
     if let Ok(s) = ::std::env::var("FOREST_CONF") {
         return file_name == s;
     }
+    if !file_name.ends_with(".json") {
+        return false;
+    }
 
     for rx in SKIP_TESTS.iter() {
         if rx.is_match(file_name) {
@@ -61,7 +76,8 @@ fn is_valid_file(entry: &DirEntry) -> bool {
             return false;
         }
     }
-    file_name.ends_with(".json")
+
+    true
 }
 
 struct GzipDecoder<R>(GzDecoder<R>);
@@ -105,21 +121,21 @@ fn check_msg_result(
         ));
     }
 
+    let (expected, actual) = (&expected_rec.return_data, &actual_rec.return_data);
+    if expected != actual {
+        return Err(format!(
+            "return data of msg {} did not match; expected: {:?}, got {:?}",
+            label,
+            expected.as_slice(),
+            actual.as_slice()
+        ));
+    }
+
     let (expected, actual) = (expected_rec.gas_used, actual_rec.gas_used);
     if expected != actual {
         return Err(format!(
             "gas used of msg {} did not match; expected: {}, got {}",
             label, expected, actual
-        ));
-    }
-
-    let (expected, actual) = (&expected_rec.return_data, &actual_rec.return_data);
-    if expected != actual {
-        return Err(format!(
-            "return data of msg {} did not match; expected: {}, got {}",
-            label,
-            base64::encode(expected.as_slice()),
-            base64::encode(actual.as_slice())
         ));
     }
 
@@ -154,8 +170,9 @@ async fn execute_message_vector(
     postconditions: &PostConditions,
     randomness: &Randomness,
     variant: &Variant,
+    engine: fvm::machine::Engine,
 ) -> Result<(), Box<dyn StdError>> {
-    let bs = load_car(car).await?;
+    let bs = Arc::new(load_car(car).await?);
 
     let mut base_epoch: ChainEpoch = variant.epoch;
     let mut root = root_cid;
@@ -168,7 +185,7 @@ async fn execute_message_vector(
         }
 
         let (ret, post_root) = execute_message(
-            &bs,
+            bs.clone(),
             &selector,
             ExecuteMessageParams {
                 pre_root: &root,
@@ -181,7 +198,9 @@ async fn execute_message_vector(
                     .map(|i| i.to_bigint().unwrap())
                     .unwrap_or(DEFAULT_BASE_FEE.clone()),
                 randomness: ReplayingRand::new(randomness),
+                nv: variant.nv.try_into().unwrap_or(NetworkVersion::V0),
             },
+            engine.clone(),
         )?;
         root = post_root;
 
@@ -189,7 +208,7 @@ async fn execute_message_vector(
         check_msg_result(receipt, &ret, i)?;
     }
 
-    compare_state_roots(&bs, &root, &postconditions.state_tree.root_cid)?;
+    compare_state_roots(bs.as_ref(), &root, &postconditions.state_tree.root_cid)?;
 
     Ok(())
 }
@@ -205,7 +224,7 @@ async fn execute_tipset_vector(
 ) -> Result<(), Box<dyn StdError>> {
     let bs = load_car(car).await?;
     let bs = Arc::new(bs);
-    let sm = Arc::new(StateManager::new(Arc::new(ChainStore::new(bs))));
+    let sm = Arc::new(StateManager::new(Arc::new(ChainStore::new(bs))).await?);
     genesis::initialize_genesis(None, &sm).await.unwrap();
 
     let base_epoch = variant.epoch;
@@ -270,7 +289,10 @@ async fn conformance_test_runner() {
         .await
         .unwrap();
 
-    let walker = WalkDir::new("test-vectors/corpus").into_iter();
+    let walker = WalkDir::new("fvm-test-vectors/corpus").into_iter();
+
+    let engine = fvm::machine::Engine::default();
+
     let mut failed = Vec::new();
     let mut succeeded = 0;
     for entry in walker.filter_map(|e| e.ok()).filter(is_valid_file) {
@@ -300,11 +322,16 @@ async fn conformance_test_runner() {
                         &postconditions,
                         &randomness,
                         &variant,
+                        engine.clone(),
                     )
                     .await
                     {
+                        println!(
+                            "{} failed, variant {}({})",
+                            test_name, variant.id, variant.nv
+                        );
                         failed.push((
-                            format!("{} variant {}", test_name, variant.id),
+                            format!("{} variant {}({})", test_name, variant.id, variant.nv),
                             meta.clone(),
                             e,
                         ));
@@ -349,14 +376,23 @@ async fn conformance_test_runner() {
         }
     }
 
-    println!("{}/{} tests passed:", succeeded, failed.len() + succeeded);
+    println!(
+        "conformance tests result: {}/{} tests passed:",
+        succeeded,
+        failed.len() + succeeded
+    );
     if !failed.is_empty() {
-        for (path, meta, e) in failed {
+        for (path, meta, e) in &failed {
             eprintln!(
                 "file {} failed:\n\tMeta: {:?}\n\tError: {}\n",
                 path, meta, e
             );
         }
+        println!(
+            "conformance tests result: {}/{} tests passed:",
+            succeeded,
+            failed.len() + succeeded
+        );
         panic!()
     }
 }

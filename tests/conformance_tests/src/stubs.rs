@@ -3,6 +3,7 @@
 
 use super::*;
 
+#[derive(Clone)]
 pub struct TestRand;
 impl Rand for TestRand {
     fn get_chain_randomness(
@@ -10,7 +11,7 @@ impl Rand for TestRand {
         _: DomainSeparationTag,
         _: ChainEpoch,
         _: &[u8],
-    ) -> Result<[u8; 32], Box<dyn StdError>> {
+    ) -> anyhow::Result<[u8; 32]> {
         Ok(*b"i_am_random_____i_am_random_____")
     }
     fn get_beacon_randomness(
@@ -18,23 +19,7 @@ impl Rand for TestRand {
         _: DomainSeparationTag,
         _: ChainEpoch,
         _: &[u8],
-    ) -> Result<[u8; 32], Box<dyn StdError>> {
-        Ok(*b"i_am_random_____i_am_random_____")
-    }
-    fn get_beacon_randomness_looking_forward(
-        &self,
-        _: DomainSeparationTag,
-        _: ChainEpoch,
-        _: &[u8],
-    ) -> Result<[u8; 32], Box<dyn StdError>> {
-        Ok(*b"i_am_random_____i_am_random_____")
-    }
-    fn get_chain_randomness_looking_forward(
-        &self,
-        _: DomainSeparationTag,
-        _: ChainEpoch,
-        _: &[u8],
-    ) -> Result<[u8; 32], Box<dyn StdError>> {
+    ) -> anyhow::Result<[u8; 32]> {
         Ok(*b"i_am_random_____i_am_random_____")
     }
 }
@@ -52,8 +37,8 @@ impl Syscalls for TestSyscalls {
     fn verify_seal(&self, _: &SealVerifyInfo) -> Result<(), Box<dyn StdError>> {
         Ok(())
     }
-    fn verify_post(&self, _: &WindowPoStVerifyInfo) -> Result<(), Box<dyn StdError>> {
-        Ok(())
+    fn verify_post(&self, _: &WindowPoStVerifyInfo) -> Result<bool, Box<dyn StdError>> {
+        Ok(true)
     }
 
     // TODO check if this should be defaulted as well

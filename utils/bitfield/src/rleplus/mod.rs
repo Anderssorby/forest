@@ -67,15 +67,11 @@ mod writer;
 pub use reader::BitReader;
 pub use writer::BitWriter;
 
-use super::{BitField, Result};
+use super::{BitField, Result, MAX_ENCODED_SIZE};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::borrow::Cow;
 
-// MaxEncodedSize is the maximum encoded size of a bitfield. When expanded into
-// a slice of runs, a bitfield of this size should not exceed 2MiB of memory.
-//
-// This bitfield can fit at least 3072 sparse elements.
-const MAX_ENCODED_SIZE: usize = 32 << 10;
+pub const VERSION: u8 = 0;
 
 impl Serialize for BitField {
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -99,6 +95,12 @@ impl<'de> Deserialize<'de> for BitField {
         D: Deserializer<'de>,
     {
         let bytes: Cow<'de, [u8]> = serde_bytes::deserialize(deserializer)?;
+        if bytes.len() > MAX_ENCODED_SIZE {
+            return Err(serde::de::Error::custom(format!(
+                "decoded bitfield was too large {}",
+                bytes.len()
+            )));
+        }
         Self::from_bytes(&bytes).map_err(serde::de::Error::custom)
     }
 }
@@ -106,18 +108,31 @@ impl<'de> Deserialize<'de> for BitField {
 impl BitField {
     /// Decodes RLE+ encoded bytes into a bit field.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+        if let Some(value) = bytes.last() {
+            if *value == 0 {
+                return Err("not minimally encoded");
+            }
+        }
+
         let mut reader = BitReader::new(bytes);
 
         let version = reader.read(2);
-        if version != 0 {
+        if version != VERSION {
             return Err("incorrect version");
         }
 
         let mut next_value = reader.read(1) == 1;
         let mut ranges = Vec::new();
         let mut index = 0;
+        let mut total_len: u64 = 0;
 
         while let Some(len) = reader.read_len()? {
+            let (new_total_len, ovf) = total_len.overflowing_add(len as u64);
+            if ovf {
+                return Err("RLE+ overflow");
+            }
+            total_len = new_total_len;
+
             let start = index;
             index += len;
             let end = index;
@@ -182,7 +197,16 @@ mod tests {
     #[test]
     fn test() {
         for (bits, expected) in vec![
-            (vec![], bitfield![]),
+            (vec![], Ok(bitfield![])),
+            (
+                vec![
+                    1, 0, // incorrect version
+                    1, // starts with 1
+                    0, 1, // fits into 4 bits
+                    0, 0, 0, 1, // 8 - 1
+                ],
+                Err("incorrect version"),
+            ),
             (
                 vec![
                     0, 0, // version
@@ -190,7 +214,7 @@ mod tests {
                     0, 1, // fits into 4 bits
                     0, 0, 0, 1, // 8 - 1
                 ],
-                bitfield![1, 1, 1, 1, 1, 1, 1, 1],
+                Ok(bitfield![1, 1, 1, 1, 1, 1, 1, 1]),
             ),
             (
                 vec![
@@ -202,7 +226,7 @@ mod tests {
                     0, 1, // fits into 4 bits
                     1, 1, 0, 0, // 3 - 1
                 ],
-                bitfield![1, 1, 1, 1, 0, 1, 1, 1],
+                Ok(bitfield![1, 1, 1, 1, 0, 1, 1, 1]),
             ),
             (
                 vec![
@@ -211,9 +235,9 @@ mod tests {
                     0, 0, // does not fit into 4 bits
                     1, 0, 0, 1, 1, 0, 0, 0, // 25 - 1
                 ],
-                bitfield![
+                Ok(bitfield![
                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-                ],
+                ]),
             ),
             // when a length of 0 is encountered, the rest of the encoded bits should be ignored
             (
@@ -225,15 +249,124 @@ mod tests {
                     0, 0, 0, 0, // 0 - 0
                     1, // 1 - 1
                 ],
-                bitfield![1],
+                Ok(bitfield![1]),
+            ),
+            // when a length of 0 is encountered, the rest of the encoded bits should be ignored
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    1, // 1 - 1
+                    0, 0, // fits into a varint
+                    0, 0, 0, 0, 0, 0, 0, 0, // 0 - 0
+                    1, // 1 - 1
+                ],
+                Ok(bitfield![1]),
+            ),
+            // when the last byte is zero, this should fail
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    0, 1, // fits into 4 bits
+                    1, 0, 1, // 5 - 1
+                    0, 0, 0, 0, 0, 0, 0, 0,
+                ],
+                Err("not minimally encoded"),
+            ),
+            // a valid varint
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    0, 0, // fits into a varint
+                    1, 0, 0, 0, 1, 0, 0, 0, // 17 - 1
+                    0, 0, 0,
+                ],
+                Ok(bitfield![1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
+            ),
+            // a varint that is not minimally encoded
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    0, 0, // fits into a varint
+                    1, 1, 0, 0, 0, 0, 0, 1, // 3 - 1
+                    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+                ],
+                Err("Invalid varint"),
+            ),
+            // a varint must not take more than 9 bytes
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    0, 0, // fits into a varint
+                    1, 0, 0, 0, 0, 0, 0, 1, // 1 - 1
+                    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+                    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+                    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+                ],
+                Err("Invalid varint"),
+            ),
+            // total running length should not overflow
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    0, 0, // fits into a varint
+                    1, 1, 1, 1, 1, 1, 1, 1, // 9223372036854775807 - 1
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, // fits into a varint
+                    1, 1, 1, 1, 1, 1, 1, 1, // 9223372036854775807 - 0
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, // fits into 4 bits
+                    0, 1, 0, 0, // 2 - 1
+                ],
+                Err("RLE+ overflow"),
+            ),
+            // block_long that could have fit on block_short. TODO: is this legit?
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    0, 0, // fits into a varint
+                    1, 1, 0, 0, 0, 0, 0, 0, // 3 - 1
+                    1, 1, 1,
+                ],
+                Ok(bitfield![1, 1, 1, 0, 1, 0]),
+            ),
+            // block_long that could have fit on block_single. TODO: is this legit?
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    0, 0, // fits into a varint
+                    1, 0, 0, 0, 0, 0, 0, 0, // 1 - 1
+                    1, 1, 1,
+                ],
+                Ok(bitfield![1, 0, 1, 0]),
+            ),
+            // block_short that could have fit on block_single. TODO: is this legit?
+            (
+                vec![
+                    0, 0, // version
+                    1, // starts with 1
+                    0, 1, // fits into 4 bits
+                    1, 0, 0, 0, // 1 - 1
+                    1, 1, 1, 1, 1, 1, 1,
+                ],
+                Ok(bitfield![1, 0, 1, 0, 1, 0, 1, 0]),
             ),
         ] {
             let mut writer = BitWriter::new();
             for bit in bits {
                 writer.write(bit, 1);
             }
-            let bf = BitField::from_bytes(&writer.finish()).unwrap();
-            assert_eq!(bf, expected);
+            let res = BitField::from_bytes(&writer.finish_test());
+            assert_eq!(res, expected);
         }
     }
 
@@ -242,7 +375,7 @@ mod tests {
         let mut rng = XorShiftRng::seed_from_u64(1);
 
         for _i in 0..1000 {
-            let len: usize = rng.gen_range(0, 1000);
+            let len: usize = rng.gen_range(0..1000);
             let bits: Vec<_> = (0..len).filter(|_| rng.gen::<bool>()).collect();
 
             let ranges: Vec<_> = ranges_from_bits(bits.clone()).collect();
@@ -250,5 +383,43 @@ mod tests {
 
             assert_eq!(bf.ranges().collect::<Vec<_>>(), ranges);
         }
+    }
+
+    // auditor says this:
+    // I used the ntest package to add a 60 sec timeout
+    // to the test, as it would otherwise not complete.
+    // may consider doing this eventually
+    //#[timeout(60000)]
+    #[test]
+    fn iter_last() {
+        // Create RLE with 2**64-2 set bits- tests timeout on the `let max` line with last
+        let rle: Vec<u8> = vec![
+            0xE4, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x2F, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0x7F,
+        ];
+        let max = BitField::from_bytes(&rle).unwrap().last().unwrap();
+        assert_eq!(max, 18446744073709551614);
+    }
+
+    #[test]
+    fn test_unset_last() {
+        // Create a bitfield first 3 set bits
+        let ranges: Vec<usize> = vec![0, 1, 2, 3];
+        let iter = ranges_from_bits(ranges);
+        let mut bf = BitField::from_ranges(iter);
+        // Unset bit at pos 3
+        bf.unset(3);
+
+        let last = bf.last().unwrap();
+        assert_eq!(2, last);
+    }
+
+    #[test]
+    fn test_zero_last() {
+        let mut bf = BitField::new();
+        bf.set(0);
+
+        let last = bf.last().unwrap();
+        assert_eq!(0, last);
     }
 }
