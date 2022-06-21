@@ -9,7 +9,6 @@ members = [
     "blockchain/beacon",
     "blockchain/message_pool",
     "vm",
-    "vm/actor",
     "vm/actor_interface",
     "vm/address",
     "vm/message",
@@ -31,7 +30,6 @@ members = [
     "ipld/hamt",
     "ipld/blockstore",
     "key_management",
-    "tests/conformance_tests",
     "tests/serialization_tests",
     "types",
     "types/networks",
@@ -67,10 +65,6 @@ commcid           = { path = "./utils/commcid" }
 forest_vm         = { path = "./vm" }
 forest_runtime    = { path = "./vm/runtime" }
 forest_message    = { path = "./vm/message" }
-fvm               = { git = "https://github.com/filecoin-project/ref-fvm/", branch = "master" }
-fvm_shared        = { git = "https://github.com/filecoin-project/ref-fvm/", branch = "master" }
-# FIXME: Switch to serde_ipld_dagcbor-0.1.2 once it has been released
-serde_ipld_dagcbor = { git = "https://github.com/Stebalien/cbor/", branch = "fix/truncate-error" }
 
 [profile.dev]
 debug = 0

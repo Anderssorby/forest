@@ -203,8 +203,10 @@ where
         {
             (version, Some(info), actors)
         } else {
-            // Fallback to v0 state tree if retrieval fails
-            (StateTreeVersion::V0, None, *c)
+            return Err("Failed to load version info for statetree".to_string())?;
+            // eprintln!("Failed to load version info for statetree");
+            // // Fallback to v0 state tree if retrieval fails
+            // (StateTreeVersion::V0, None, *c)
         };
 
         match version {
@@ -490,7 +492,7 @@ mod tests {
     #[async_std::test]
     async fn state_tree_export_import() {
         let db = db::MemoryDB::default();
-        let mut tree = StateTree::new(&db, StateTreeVersion::V3).unwrap();
+        let mut tree = StateTree::new(&db, StateTreeVersion::V4).unwrap();
         let root = tree.flush().unwrap();
 
         let dir = "/tmp/sttest";

@@ -8,6 +8,7 @@ pub use self::gas_charge::GasCharge;
 pub use self::price_list::{price_list_by_epoch, PriceList};
 use vm::{actor_error, ActorError, ExitCode};
 
+// FIXME: Use gas tracker from the FVM: https://github.com/ChainSafe/forest/issues/1560
 pub(crate) struct GasTracker {
     gas_available: i64,
     gas_used: i64,
@@ -28,7 +29,7 @@ impl GasTracker {
 
         if self.gas_used > self.gas_available - to_use {
             self.gas_used = self.gas_available;
-            Err(actor_error!(SysErrOutOfGas;
+            Err(actor_error!(SYS_OUT_OF_GAS;
                     "not enough gas (used={}) (available={})",
                to_use, self.gas_available
             ))
@@ -38,6 +39,7 @@ impl GasTracker {
         }
     }
 
+    #[allow(dead_code)]
     /// Getter for gas available.
     pub fn gas_available(&self) -> i64 {
         self.gas_available

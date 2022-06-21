@@ -8,12 +8,12 @@ use blockstore::BlockStore;
 use cid::Cid;
 pub use error::*;
 use futures::{AsyncRead, AsyncWrite, Stream, StreamExt};
-use fvm_shared::encoding::{from_slice, to_vec};
+use fvm_ipld_encoding::{from_slice, to_vec};
 use serde::{Deserialize, Serialize};
 use util::{ld_read, ld_write, read_node};
 
 /// CAR file header
-#[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub struct CarHeader {
     pub roots: Vec<Cid>,
     pub version: u64,
