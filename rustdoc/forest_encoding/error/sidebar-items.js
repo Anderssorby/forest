@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["CborDecodeError","A decoding error."],["CborEncodeError","An encoding error."]]};
