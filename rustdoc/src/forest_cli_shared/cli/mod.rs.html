@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `forest/shared/src/cli/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../forest_cli_shared/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `forest/shared/src/cli/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../forest_cli_shared/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -411,118 +411,148 @@
 <a href="#411" id="411">411</a>
 <a href="#412" id="412">412</a>
 <a href="#413" id="413">413</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
 </span><span class="kw">mod </span>client;
 <span class="kw">mod </span>config;
 <span class="kw">mod </span>snapshot_fetch;
 
-<span class="kw">pub use </span><span class="self">self</span>::{client::<span class="kw-2">*</span>, config::<span class="kw-2">*</span>, snapshot_fetch::<span class="kw-2">*</span>};
-<span class="kw">use </span><span class="kw">crate</span>::logger::LoggingColor;
+<span class="kw">use </span>std::{
+    net::SocketAddr,
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 
+<span class="kw">use </span>ahash::HashSet;
 <span class="kw">use </span>byte_unit::Byte;
+<span class="kw">use </span>clap::Parser;
 <span class="kw">use </span>directories::ProjectDirs;
 <span class="kw">use </span>forest_networks::ChainConfig;
 <span class="kw">use </span>forest_utils::io::{read_file_to_string, read_toml, ProgressBarVisibility};
-<span class="kw">use </span>fvm_shared::bigint::BigInt;
 <span class="kw">use </span>git_version::git_version;
 <span class="kw">use </span>log::error;
+<span class="kw">use </span>num::BigInt;
 <span class="kw">use </span>once_cell::sync::Lazy;
-<span class="kw">use </span>std::collections::HashSet;
-<span class="kw">use </span>std::net::SocketAddr;
-<span class="kw">use </span>std::path::{Path, PathBuf};
-<span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>structopt::StructOpt;
+
+<span class="kw">pub use </span><span class="self">self</span>::{client::<span class="kw-2">*</span>, config::<span class="kw-2">*</span>, snapshot_fetch::<span class="kw-2">*</span>};
+<span class="kw">use </span><span class="kw">crate</span>::logger::LoggingColor;
 
 <span class="kw">const </span>GIT_HASH: <span class="kw-2">&amp;</span>str = <span class="macro">git_version!</span>(args = [<span class="string">&quot;--always&quot;</span>, <span class="string">&quot;--exclude&quot;</span>, <span class="string">&quot;*&quot;</span>], fallback = <span class="string">&quot;unknown&quot;</span>);
 
 <span class="kw">pub static </span>FOREST_VERSION_STRING: Lazy&lt;String&gt; =
     Lazy::new(|| <span class="macro">format!</span>(<span class="string">&quot;{}+git.{}&quot;</span>, <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>), GIT_HASH));
 
+<span class="kw">pub static </span>HELP_MESSAGE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;\
+{name} {version}
+{author}
+{about}
+
+USAGE:
+  {usage}
+
+SUBCOMMANDS:
+{subcommands}
+
+OPTIONS:
+{options}
+&quot;</span>;
+
 <span class="doccomment">/// CLI options
-</span><span class="attr">#[derive(StructOpt, Debug)]
+</span><span class="attr">#[derive(Debug, Parser)]
 </span><span class="kw">pub struct </span>CliOpts {
     <span class="doccomment">/// A TOML file containing relevant configurations
-    </span><span class="attr">#[structopt(short, long)]
+    </span><span class="attr">#[arg(short, long)]
     </span><span class="kw">pub </span>config: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="doccomment">/// The genesis CAR file
-    </span><span class="attr">#[structopt(short, long)]
+    </span><span class="attr">#[arg(short, long)]
     </span><span class="kw">pub </span>genesis: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="doccomment">/// Allow RPC to be active or not (default: true)
-    </span><span class="attr">#[structopt(short, long)]
+    </span><span class="attr">#[arg(short, long)]
     </span><span class="kw">pub </span>rpc: <span class="prelude-ty">Option</span>&lt;bool&gt;,
     <span class="doccomment">/// Client JWT token to use for JSON-RPC authentication
-    </span><span class="attr">#[structopt(short, long)]
+    </span><span class="attr">#[arg(short, long)]
     </span><span class="kw">pub </span>token: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="doccomment">/// Address used for metrics collection server. By defaults binds on localhost on port 6116.
-    </span><span class="attr">#[structopt(long)]
+    <span class="doccomment">/// Address used for metrics collection server. By defaults binds on
+    /// localhost on port 6116.
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>metrics_address: <span class="prelude-ty">Option</span>&lt;SocketAddr&gt;,
     <span class="doccomment">/// Address used for RPC. By defaults binds on localhost on port 1234.
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>rpc_address: <span class="prelude-ty">Option</span>&lt;SocketAddr&gt;,
     <span class="doccomment">/// Allow Kademlia (default: true)
-    </span><span class="attr">#[structopt(short, long)]
+    </span><span class="attr">#[arg(short, long)]
     </span><span class="kw">pub </span>kademlia: <span class="prelude-ty">Option</span>&lt;bool&gt;,
     <span class="doccomment">/// Allow MDNS (default: false)
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>mdns: <span class="prelude-ty">Option</span>&lt;bool&gt;,
-    <span class="doccomment">/// Validate snapshot at given EPOCH, use a negative value -N to validate the last N EPOCH(s)
-    </span><span class="attr">#[structopt(long)]
+    <span class="doccomment">/// Validate snapshot at given EPOCH, use a negative value -N to validate
+    /// the last N EPOCH(s)
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>height: <span class="prelude-ty">Option</span>&lt;i64&gt;,
     <span class="doccomment">/// Import a snapshot from a local CAR file or URL
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>import_snapshot: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="doccomment">/// Halt with exit code 0 after successfully importing a snapshot
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>halt_after_import: bool,
     <span class="doccomment">/// Import a chain from a local CAR file or URL
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>import_chain: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="doccomment">/// Skips loading CAR file and uses header to index chain. Assumes a pre-loaded database
-    </span><span class="attr">#[structopt(long)]
+    <span class="doccomment">/// Skips loading CAR file and uses header to index chain. Assumes a
+    /// pre-loaded database
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>skip_load: bool,
     <span class="doccomment">/// Number of tipsets requested over chain exchange (default is 200)
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>req_window: <span class="prelude-ty">Option</span>&lt;i64&gt;,
-    <span class="doccomment">/// Number of tipsets to include in the sample that determines what the network head is
-    </span><span class="attr">#[structopt(long)]
+    <span class="doccomment">/// Number of tipsets to include in the sample that determines what the
+    /// network head is
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>tipset_sample_size: <span class="prelude-ty">Option</span>&lt;u8&gt;,
     <span class="doccomment">/// Amount of Peers we want to be connected to (default is 75)
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>target_peer_count: <span class="prelude-ty">Option</span>&lt;u32&gt;,
     <span class="doccomment">/// Encrypt the key-store (default: true)
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>encrypt_keystore: <span class="prelude-ty">Option</span>&lt;bool&gt;,
     <span class="doccomment">/// Choose network chain to sync to
-    </span><span class="attr">#[structopt(
-        long,
-        default_value = <span class="string">&quot;mainnet&quot;</span>,
-        possible_values = <span class="kw-2">&amp;</span>[<span class="string">&quot;mainnet&quot;</span>, <span class="string">&quot;calibnet&quot;</span>]</span>,
-    )]
-    <span class="kw">pub </span>chain: String,
+    </span><span class="attr">#[arg(long, default_value = <span class="string">&quot;mainnet&quot;</span>)]
+    </span><span class="kw">pub </span>chain: String,
     <span class="doccomment">/// Daemonize Forest process
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>detach: bool,
-    <span class="doccomment">/// Download a chain specific snapshot to sync with the Filecoin network
-    </span><span class="attr">#[structopt(long)]
-    </span><span class="kw">pub </span>download_snapshot: bool,
+    <span class="doccomment">/// Automatically download a chain specific snapshot to sync with the
+    /// Filecoin network if needed.
+    </span><span class="attr">#[arg(long)]
+    </span><span class="kw">pub </span>auto_download_snapshot: bool,
     <span class="doccomment">/// Enable or disable colored logging in `stdout`
-    </span><span class="attr">#[structopt(long, default_value = <span class="string">&quot;auto&quot;</span>)]
+    </span><span class="attr">#[arg(long, default_value = <span class="string">&quot;auto&quot;</span>)]
     </span><span class="kw">pub </span>color: LoggingColor,
-    <span class="doccomment">/// Display progress bars mode [always, never, auto]. Auto will display if TTY.
-    </span><span class="attr">#[structopt(long, default_value = <span class="string">&quot;auto&quot;</span>)]
+    <span class="doccomment">/// Display progress bars mode [always, never, auto]. Auto will display if
+    /// TTY.
+    </span><span class="attr">#[arg(long, default_value = <span class="string">&quot;auto&quot;</span>)]
     </span><span class="kw">pub </span>show_progress_bars: ProgressBarVisibility,
     <span class="doccomment">/// Turn on tokio-console support for debugging
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>tokio_console: bool,
     <span class="doccomment">/// Send telemetry to `grafana loki`
-    </span><span class="attr">#[structopt(long)]
+    </span><span class="attr">#[arg(long)]
     </span><span class="kw">pub </span>loki: bool,
     <span class="doccomment">/// Endpoint of `grafana loki`
-    </span><span class="attr">#[structopt(long, default_value = <span class="string">&quot;http://127.0.0.1:3100&quot;</span>)]
+    </span><span class="attr">#[arg(long, default_value = <span class="string">&quot;http://127.0.0.1:3100&quot;</span>)]
     </span><span class="kw">pub </span>loki_endpoint: String,
-    <span class="attr">#[structopt(
+    <span class="attr">#[arg(
         long,
         help = <span class="string">&quot;Specify a directory into which rolling log files should be appended&quot;
     </span>)]
@@ -567,22 +597,22 @@
         }
         <span class="kw">if </span><span class="self">self</span>.import_snapshot.is_some() &amp;&amp; <span class="self">self</span>.import_chain.is_some() {
             <span class="macro">anyhow::bail!</span>(<span class="string">&quot;Can&#39;t set import_snapshot and import_chain at the same time!&quot;</span>)
-        } <span class="kw">else </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(snapshot_path) = <span class="kw-2">&amp;</span><span class="self">self</span>.import_snapshot {
-                cfg.client.snapshot_path = <span class="prelude-val">Some</span>(snapshot_path.into());
-                cfg.client.snapshot = <span class="bool-val">true</span>;
-            }
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(snapshot_path) = <span class="kw-2">&amp;</span><span class="self">self</span>.import_chain {
-                cfg.client.snapshot_path = <span class="prelude-val">Some</span>(snapshot_path.into());
-                cfg.client.snapshot = <span class="bool-val">false</span>;
-            }
-            cfg.client.snapshot_height = <span class="self">self</span>.height;
-
-            cfg.client.skip_load = <span class="self">self</span>.skip_load;
         }
 
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(snapshot_path) = <span class="kw-2">&amp;</span><span class="self">self</span>.import_snapshot {
+            cfg.client.snapshot_path = <span class="prelude-val">Some</span>(snapshot_path.into());
+            cfg.client.snapshot = <span class="bool-val">true</span>;
+        }
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(snapshot_path) = <span class="kw-2">&amp;</span><span class="self">self</span>.import_chain {
+            cfg.client.snapshot_path = <span class="prelude-val">Some</span>(snapshot_path.into());
+            cfg.client.snapshot = <span class="bool-val">false</span>;
+        }
+        cfg.client.snapshot_height = <span class="self">self</span>.height;
+
+        cfg.client.skip_load = <span class="self">self</span>.skip_load;
+
         cfg.client.halt_after_import = <span class="self">self</span>.halt_after_import;
-        cfg.client.download_snapshot = <span class="self">self</span>.download_snapshot;
+        cfg.client.auto_download_snapshot = <span class="self">self</span>.auto_download_snapshot;
         cfg.client.show_progress_bars = <span class="self">self</span>.show_progress_bars;
 
         cfg.network.kademlia = <span class="self">self</span>.kademlia.unwrap_or(cfg.network.kademlia);
@@ -668,8 +698,9 @@
 }
 
 <span class="kw">pub fn </span>check_for_unknown_keys(path: <span class="kw-2">&amp;</span>Path, config: <span class="kw-2">&amp;</span>Config) {
-    <span class="comment">// `config` has been loaded successfully from toml file in `path` so we can always serialize
-    // it back to a valid TOML value or get the TOML value from `path`
+    <span class="comment">// `config` has been loaded successfully from toml file in `path` so we can
+    // always serialize it back to a valid TOML value or get the TOML value from
+    // `path`
     </span><span class="kw">let </span>file = read_file_to_string(path).unwrap();
     <span class="kw">let </span>value = file.parse::&lt;toml::Value&gt;().unwrap();
 
@@ -702,18 +733,6 @@
         .join(config.chain.name.clone())
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;rocksdb&quot;</span>)]
-</span><span class="doccomment">/// Gets database directory
-</span><span class="kw">pub fn </span>db_path(config: <span class="kw-2">&amp;</span>Config) -&gt; PathBuf {
-    chain_path(config).join(<span class="string">&quot;rocksdb&quot;</span>)
-}
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;paritydb&quot;</span>)]
-</span><span class="doccomment">/// Gets database directory
-</span><span class="kw">pub fn </span>db_path(config: <span class="kw-2">&amp;</span>Config) -&gt; PathBuf {
-    chain_path(config).join(<span class="string">&quot;paritydb&quot;</span>)
-}
-
 <span class="doccomment">/// Gets chain data directory
 </span><span class="kw">pub fn </span>chain_path(config: <span class="kw-2">&amp;</span>Config) -&gt; PathBuf {
     PathBuf::from(<span class="kw-2">&amp;</span>config.client.data_dir).join(<span class="kw-2">&amp;</span>config.chain.name)
@@ -726,8 +745,8 @@
     std::process::exit(code);
 }
 
-<span class="doccomment">/// convert `BigInt` to size string using byte size units (i.e. KiB, GiB, PiB, etc)
-/// Provided number cannot be negative, otherwise the function will panic.
+<span class="doccomment">/// convert `BigInt` to size string using byte size units (i.e. KiB, GiB, PiB,
+/// etc) Provided number cannot be negative, otherwise the function will panic.
 </span><span class="kw">pub fn </span>to_size_string(input: <span class="kw-2">&amp;</span>BigInt) -&gt; anyhow::Result&lt;String&gt; {
     <span class="kw">let </span>bytes = u128::try_from(input)
         .map_err(|e| <span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;error parsing the input {}: {}&quot;</span>, input, e))<span class="question-mark">?</span>;
@@ -739,8 +758,9 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
+    <span class="kw">use </span>num::Zero;
+
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span>fvm_shared::bigint::Zero;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>to_size_string_valid_input() {
@@ -825,4 +845,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="forest_cli_shared" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="forest_cli_shared" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

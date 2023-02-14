@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `utils/genesis/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_genesis/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `utils/genesis/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_genesis/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -210,38 +210,37 @@
 <a href="#210" id="210">210</a>
 <a href="#211" id="211">211</a>
 <a href="#212" id="212">212</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use </span>anyhow::bail;
+</span><span class="kw">use </span>std::{sync::Arc, time};
+
+<span class="kw">use </span>anyhow::bail;
 <span class="kw">use </span>cid::Cid;
 <span class="kw">use </span>forest_blocks::{BlockHeader, Tipset, TipsetKeys};
-<span class="kw">use </span>forest_chain::ChainStore;
 <span class="kw">use </span>forest_db::Store;
 <span class="kw">use </span>forest_state_manager::StateManager;
-<span class="kw">use </span>forest_utils::db::BlockstoreExt;
-<span class="kw">use </span>forest_utils::net::FetchProgress;
+<span class="kw">use </span>forest_utils::{db::BlockstoreExt, net::FetchProgress};
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
 <span class="kw">use </span>fvm_ipld_car::{load_car, CarReader};
 <span class="kw">use </span>log::{debug, info};
-<span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>std::time;
-<span class="kw">use </span>tokio::fs::File;
-<span class="kw">use </span>tokio::io::AsyncRead;
-<span class="kw">use </span>tokio::io::BufReader;
+<span class="kw">use </span>tokio::{
+    fs::File,
+    io::{AsyncRead, BufReader},
+};
 <span class="kw">use </span>tokio_util::compat::TokioAsyncReadCompatExt;
 <span class="kw">use </span>url::Url;
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;testing&quot;</span>)]
 </span><span class="kw">pub const </span>EXPORT_SR_40: <span class="kw-2">&amp;</span>[u8] = <span class="macro">std::include_bytes!</span>(<span class="string">&quot;export40.car&quot;</span>);
 
-<span class="doccomment">/// Uses an optional file path or the default genesis to parse the genesis and determine if
-/// chain store has existing data for the given genesis.
+<span class="doccomment">/// Uses an optional file path or the default genesis to parse the genesis and
+/// determine if chain store has existing data for the given genesis.
 </span><span class="kw">pub async fn </span>read_genesis_header&lt;DB&gt;(
     genesis_fp: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt;,
     genesis_bytes: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[u8]&gt;,
-    cs: <span class="kw-2">&amp;</span>ChainStore&lt;DB&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Tipset, anyhow::Error&gt;
+    db: <span class="kw-2">&amp;</span>DB,
+) -&gt; <span class="prelude-ty">Result</span>&lt;BlockHeader, anyhow::Error&gt;
 <span class="kw">where
     </span>DB: Blockstore + Store + Send + Sync,
 {
@@ -249,31 +248,28 @@
         <span class="prelude-val">Some</span>(path) =&gt; {
             <span class="kw">let </span>file = File::open(path).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">let </span>reader = BufReader::new(file);
-            process_car(reader, cs).<span class="kw">await</span><span class="question-mark">?
+            process_car(reader, db).<span class="kw">await</span><span class="question-mark">?
         </span>}
         <span class="prelude-val">None </span>=&gt; {
             <span class="macro">debug!</span>(<span class="string">&quot;No specified genesis in config. Using default genesis.&quot;</span>);
             <span class="kw">let </span>genesis_bytes =
                 genesis_bytes.ok_or_else(|| <span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;No default genesis.&quot;</span>))<span class="question-mark">?</span>;
             <span class="kw">let </span>reader = BufReader::&lt;<span class="kw-2">&amp;</span>[u8]&gt;::new(genesis_bytes);
-            process_car(reader, cs).<span class="kw">await</span><span class="question-mark">?
+            process_car(reader, db).<span class="kw">await</span><span class="question-mark">?
         </span>}
     };
 
     <span class="macro">info!</span>(<span class="string">&quot;Initialized genesis: {}&quot;</span>, genesis);
-    <span class="prelude-val">Ok</span>(Tipset::new(<span class="macro">vec!</span>[genesis])<span class="question-mark">?</span>)
+    <span class="prelude-val">Ok</span>(genesis)
 }
 
-<span class="kw">pub async fn </span>get_network_name_from_genesis&lt;BS&gt;(
-    genesis_ts: <span class="kw-2">&amp;</span>Tipset,
+<span class="kw">pub fn </span>get_network_name_from_genesis&lt;BS&gt;(
+    genesis_header: <span class="kw-2">&amp;</span>BlockHeader,
     state_manager: <span class="kw-2">&amp;</span>StateManager&lt;BS&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;String, anyhow::Error&gt;
 <span class="kw">where
     </span>BS: Blockstore + Store + Clone + Send + Sync + <span class="lifetime">&#39;static</span>,
 {
-    <span class="comment">// the genesis tipset has just one block, so fetch it
-    </span><span class="kw">let </span>genesis_header = genesis_ts.min_ticket_block();
-
     <span class="comment">// Get network name from genesis state.
     </span><span class="kw">let </span>network_name = state_manager
         .get_network_name(genesis_header.state_root())
@@ -289,52 +285,33 @@
     </span>BS: Blockstore + Store + Clone + Send + Sync + <span class="lifetime">&#39;static</span>,
 {
     <span class="kw">let </span>genesis_bytes = state_manager.chain_config().genesis_bytes();
-    <span class="kw">let </span>ts = read_genesis_header(genesis_fp, genesis_bytes, state_manager.chain_store()).<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span>network_name = get_network_name_from_genesis(<span class="kw-2">&amp;</span>ts, state_manager).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>genesis =
+        read_genesis_header(genesis_fp, genesis_bytes, state_manager.blockstore()).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>ts = Tipset::from(<span class="kw-2">&amp;</span>genesis);
+    <span class="kw">let </span>network_name = get_network_name_from_genesis(<span class="kw-2">&amp;</span>genesis, state_manager)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>((ts, network_name))
 }
 
-<span class="kw">async fn </span>process_car&lt;R, BS&gt;(
-    reader: R,
-    chain_store: <span class="kw-2">&amp;</span>ChainStore&lt;BS&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;BlockHeader, anyhow::Error&gt;
+<span class="kw">async fn </span>process_car&lt;R, BS&gt;(reader: R, db: <span class="kw-2">&amp;</span>BS) -&gt; <span class="prelude-ty">Result</span>&lt;BlockHeader, anyhow::Error&gt;
 <span class="kw">where
     </span>R: AsyncRead + Send + Unpin,
     BS: Blockstore + Store + Send + Sync,
 {
     <span class="comment">// Load genesis state into the database and get the Cid
-    </span><span class="kw">let </span>genesis_cids: Vec&lt;Cid&gt; = load_car(chain_store.blockstore(), reader.compat()).<span class="kw">await</span><span class="question-mark">?</span>;
+    </span><span class="kw">let </span>genesis_cids: Vec&lt;Cid&gt; = load_car(db, reader.compat()).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">if </span>genesis_cids.len() != <span class="number">1 </span>{
         <span class="macro">panic!</span>(<span class="string">&quot;Invalid Genesis. Genesis Tipset must have only 1 Block.&quot;</span>);
     }
 
-    <span class="kw">let </span>genesis_block: BlockHeader =
-        chain_store.db.get_obj(<span class="kw-2">&amp;</span>genesis_cids[<span class="number">0</span>])<span class="question-mark">?</span>.ok_or_else(|| {
-            <span class="macro">anyhow::anyhow!</span>(
-                <span class="string">&quot;Could not find genesis block despite being loaded using a genesis file&quot;
-            </span>)
-        })<span class="question-mark">?</span>;
+    <span class="kw">let </span>genesis_block: BlockHeader = db.get_obj(<span class="kw-2">&amp;</span>genesis_cids[<span class="number">0</span>])<span class="question-mark">?</span>.ok_or_else(|| {
+        <span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;Could not find genesis block despite being loaded using a genesis file&quot;</span>)
+    })<span class="question-mark">?</span>;
 
-    <span class="kw">let </span>store_genesis = chain_store.genesis()<span class="question-mark">?</span>;
-
-    <span class="kw">if </span>store_genesis
-        .map(|store| store == genesis_block)
-        .unwrap_or_default()
-    {
-        <span class="macro">debug!</span>(<span class="string">&quot;Genesis from config matches Genesis from store&quot;</span>);
-    } <span class="kw">else </span>{
-        <span class="macro">debug!</span>(<span class="string">&quot;Initialize ChainSyncer with new genesis from config&quot;</span>);
-        chain_store.set_genesis(<span class="kw-2">&amp;</span>genesis_block)<span class="question-mark">?</span>;
-
-        chain_store
-            .set_heaviest_tipset(Arc::new(Tipset::new(<span class="macro">vec!</span>[genesis_block.clone()])<span class="question-mark">?</span>))
-            .<span class="kw">await</span><span class="question-mark">?</span>;
-    }
     <span class="prelude-val">Ok</span>(genesis_block)
 }
 
-<span class="doccomment">/// Import a chain from a CAR file. If the snapshot boolean is set, it will not verify the chain
-/// state and instead accept the largest height as genesis.
+<span class="doccomment">/// Import a chain from a CAR file. If the snapshot boolean is set, it will not
+/// verify the chain state and instead accept the largest height as genesis.
 </span><span class="kw">pub async fn </span>import_chain&lt;DB&gt;(
     sm: <span class="kw-2">&amp;</span>Arc&lt;StateManager&lt;DB&gt;&gt;,
     path: <span class="kw-2">&amp;</span>str,
@@ -362,16 +339,10 @@
     </span>};
 
     <span class="macro">info!</span>(<span class="string">&quot;Loaded .car file in {}s&quot;</span>, stopwatch.elapsed().as_secs());
-    <span class="kw">let </span>ts = sm
-        .chain_store()
-        .tipset_from_keys(<span class="kw-2">&amp;</span>TipsetKeys::new(cids))
-        .<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>ts = sm.chain_store().tipset_from_keys(<span class="kw-2">&amp;</span>TipsetKeys::new(cids))<span class="question-mark">?</span>;
 
     <span class="kw">if </span>!skip_load {
-        <span class="kw">let </span>gb = sm
-            .chain_store()
-            .tipset_by_height(<span class="number">0</span>, ts.clone(), <span class="bool-val">true</span>)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>gb = sm.chain_store().tipset_by_height(<span class="number">0</span>, ts.clone(), <span class="bool-val">true</span>)<span class="question-mark">?</span>;
         sm.chain_store().set_genesis(<span class="kw-2">&amp;</span>gb.blocks()[<span class="number">0</span>])<span class="question-mark">?</span>;
         <span class="kw">if </span>!<span class="macro">matches!</span>(<span class="kw-2">&amp;</span>sm.chain_config().genesis_cid, <span class="prelude-val">Some</span>(expected_cid) <span class="kw">if </span>expected_cid ==  <span class="kw-2">&amp;</span>gb.blocks()[<span class="number">0</span>].cid().to_string())
         {
@@ -384,7 +355,7 @@
     }
 
     <span class="comment">// Update head with snapshot header tipset
-    </span>sm.chain_store().set_heaviest_tipset(ts.clone()).<span class="kw">await</span><span class="question-mark">?</span>;
+    </span>sm.chain_store().set_heaviest_tipset(ts.clone())<span class="question-mark">?</span>;
 
     sm.blockstore().flush()<span class="question-mark">?</span>;
 
@@ -403,24 +374,53 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="doccomment">/// Loads car file into database, and returns the block header CIDs from the CAR header.
+<span class="doccomment">/// Loads car file into database, and returns the block header CIDs from the CAR
+/// header.
 </span><span class="kw">async fn </span>load_and_retrieve_header&lt;DB, R&gt;(
     store: <span class="kw-2">&amp;</span>DB,
     reader: FetchProgress&lt;R&gt;,
     skip_load: bool,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Cid&gt;, anyhow::Error&gt;
+) -&gt; anyhow::Result&lt;Vec&lt;Cid&gt;&gt;
 <span class="kw">where
-    </span>DB: Blockstore,
+    </span>DB: Store,
     R: AsyncRead + Send + Unpin,
 {
     <span class="kw">let </span><span class="kw-2">mut </span>compat = reader.compat();
     <span class="kw">let </span>result = <span class="kw">if </span>skip_load {
         CarReader::new(<span class="kw-2">&amp;mut </span>compat).<span class="kw">await</span><span class="question-mark">?</span>.header.roots
     } <span class="kw">else </span>{
-        load_car(store, <span class="kw-2">&amp;mut </span>compat).<span class="kw">await</span><span class="question-mark">?
+        forest_load_car(store, <span class="kw-2">&amp;mut </span>compat).<span class="kw">await</span><span class="question-mark">?
     </span>};
     compat.into_inner().finish();
+
     <span class="prelude-val">Ok</span>(result)
 }
+
+<span class="doccomment">/// Optimizations:
+/// 1. ParityDB could benefit from a larger buffer. It&#39;s hard coded as 1000
+/// blocks in [fvm_ipld_car::load_car] 2. Use [Store::bulk_write] instead of
+/// [Blockstore] to avoid tons of unneccesary allocations
+</span><span class="kw">pub async fn </span>forest_load_car&lt;DB, R&gt;(store: DB, reader: R) -&gt; anyhow::Result&lt;Vec&lt;Cid&gt;&gt;
+<span class="kw">where
+    </span>R: futures::AsyncRead + Send + Unpin,
+    DB: Store,
+{
+    <span class="comment">// 1GB
+    </span><span class="kw">const </span>BUFFER_CAPCITY_BYTES: usize = <span class="number">1024 </span>* <span class="number">1024 </span>* <span class="number">1024</span>;
+
+    <span class="kw">let </span><span class="kw-2">mut </span>car_reader = CarReader::new(reader).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>estimated_size = <span class="number">0</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>buffer = <span class="macro">vec!</span>[];
+    <span class="kw">while let </span><span class="prelude-val">Some</span>(block) = car_reader.next_block().<span class="kw">await</span><span class="question-mark">? </span>{
+        estimated_size += <span class="number">64 </span>+ block.data.len();
+        buffer.push((block.cid.to_bytes(), block.data));
+        <span class="kw">if </span>estimated_size &gt;= BUFFER_CAPCITY_BYTES {
+            store.bulk_write(std::mem::take(<span class="kw-2">&amp;mut </span>buffer))<span class="question-mark">?</span>;
+            estimated_size = <span class="number">0</span>;
+        }
+    }
+    store.bulk_write(buffer)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(car_reader.header.roots)
+}
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_genesis" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_genesis" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

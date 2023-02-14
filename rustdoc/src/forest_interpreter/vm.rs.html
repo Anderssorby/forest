@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `vm/interpreter/src/vm.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>vm.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_interpreter/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `vm/interpreter/src/vm.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>vm.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_interpreter/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -369,29 +369,37 @@
 <a href="#369" id="369">369</a>
 <a href="#370" id="370">370</a>
 <a href="#371" id="371">371</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use </span><span class="kw">crate</span>::fvm::ForestExterns;
+</span><span class="kw">use </span>std::sync::Arc;
+
+<span class="kw">use </span>ahash::HashSet;
 <span class="kw">use </span>cid::Cid;
 <span class="kw">use </span>forest_actor_interface::{cron, reward, system, AwardBlockRewardParams};
 <span class="kw">use </span>forest_message::ChainMessage;
 <span class="kw">use </span>forest_networks::ChainConfig;
-<span class="kw">use </span>fvm::executor::{ApplyRet, DefaultExecutor};
-<span class="kw">use </span>fvm::externs::Rand;
-<span class="kw">use </span>fvm::machine::{DefaultMachine, Machine, MultiEngine, NetworkConfig};
+<span class="kw">use </span>forest_shim::{error::ExitCode, Inner};
+<span class="kw">use </span>fvm::{
+    executor::{ApplyRet, DefaultExecutor},
+    externs::Rand,
+    machine::{DefaultMachine, Machine, MultiEngine, NetworkConfig},
+};
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
 <span class="kw">use </span>fvm_ipld_encoding::{Cbor, RawBytes};
-<span class="kw">use </span>fvm_shared::address::Address;
-<span class="kw">use </span>fvm_shared::bigint::Zero;
-<span class="kw">use </span>fvm_shared::clock::ChainEpoch;
-<span class="kw">use </span>fvm_shared::econ::TokenAmount;
-<span class="kw">use </span>fvm_shared::error::ExitCode;
-<span class="kw">use </span>fvm_shared::message::Message;
-<span class="kw">use </span>fvm_shared::receipt::Receipt;
-<span class="kw">use </span>fvm_shared::{BLOCK_GAS_LIMIT, METHOD_SEND};
-<span class="kw">use </span>std::collections::HashSet;
-<span class="kw">use </span>std::sync::Arc;
+<span class="kw">use </span>fvm_shared::{
+    address::Address, clock::ChainEpoch, econ::TokenAmount, message::Message, receipt::Receipt,
+    BLOCK_GAS_LIMIT, METHOD_SEND,
+};
+<span class="kw">use </span>num::Zero;
+
+<span class="kw">use </span><span class="kw">crate</span>::fvm::ForestExterns;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>ForestMachine&lt;DB&gt; = DefaultMachine&lt;DB, ForestExterns&lt;DB&gt;&gt;;
 
@@ -405,7 +413,8 @@
 <span class="attr">#[cfg(feature = <span class="string">&quot;instrumented_kernel&quot;</span>)]
 </span><span class="kw">type </span>ForestExecutor&lt;DB&gt; = DefaultExecutor&lt;<span class="kw">crate</span>::instrumented_kernel::ForestInstrumentedKernel&lt;DB&gt;&gt;;
 
-<span class="doccomment">/// Contains all messages to process through the VM as well as miner information for block rewards.
+<span class="doccomment">/// Contains all messages to process through the VM as well as miner information
+/// for block rewards.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>BlockMessages {
     <span class="kw">pub </span>miner: Address,
@@ -415,7 +424,8 @@
 
 <span class="doccomment">/// Allows the generation of a reward message based on gas fees and penalties.
 ///
-/// This should facilitate custom consensus protocols using their own economic incentives.
+/// This should facilitate custom consensus protocols using their own economic
+/// incentives.
 </span><span class="kw">pub trait </span>RewardCalc: Send + Sync + <span class="lifetime">&#39;static </span>{
     <span class="doccomment">/// Construct a reward message, if rewards are applicable.
     </span><span class="kw">fn </span>reward_message(
@@ -428,8 +438,8 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Message&gt;, anyhow::Error&gt;;
 }
 
-<span class="doccomment">/// Interpreter which handles execution of state transitioning messages and returns receipts
-/// from the VM execution.
+<span class="doccomment">/// Interpreter which handles execution of state transitioning messages and
+/// returns receipts from the VM execution.
 </span><span class="kw">pub struct </span>VM&lt;DB: Blockstore + <span class="lifetime">&#39;static</span>&gt; {
     fvm_executor: ForestExecutor&lt;DB&gt;,
     reward_calc: Arc&lt;<span class="kw">dyn </span>RewardCalc&gt;,
@@ -448,12 +458,12 @@
         base_fee: TokenAmount,
         circ_supply: TokenAmount,
         reward_calc: Arc&lt;<span class="kw">dyn </span>RewardCalc&gt;,
-        lb_fn: Box&lt;<span class="kw">dyn </span>Fn(ChainEpoch) -&gt; Cid&gt;,
+        lb_fn: Box&lt;<span class="kw">dyn </span>Fn(ChainEpoch) -&gt; anyhow::Result&lt;Cid&gt;&gt;,
         multi_engine: <span class="kw-2">&amp;</span>MultiEngine,
         chain_config: Arc&lt;ChainConfig&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, anyhow::Error&gt; {
         <span class="kw">let </span>network_version = chain_config.network_version(epoch);
-        <span class="kw">let </span>config = NetworkConfig::new(network_version);
+        <span class="kw">let </span>config = NetworkConfig::new(network_version.into());
         <span class="kw">let </span>engine = multi_engine.get(<span class="kw-2">&amp;</span>config)<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>context = config.for_epoch(epoch, root);
         context.set_base_fee(base_fee);
@@ -578,7 +588,7 @@
                     );
                 }
                 <span class="comment">// This is more of a sanity check, this should not be able to be hit.
-                </span><span class="kw">if </span>ret.msg_receipt.exit_code != ExitCode::OK {
+                </span><span class="kw">if </span>!ret.msg_receipt.exit_code.is_success() {
                     <span class="macro">anyhow::bail!</span>(
                         <span class="string">&quot;reward application message failed (exit: {:?})&quot;</span>,
                         ret.msg_receipt.exit_code
@@ -610,7 +620,8 @@
     }
 
     <span class="doccomment">/// Applies the state transition for a single message.
-    /// Returns `ApplyRet` structure which contains the message receipt and some meta data.
+    /// Returns `ApplyRet` structure which contains the message receipt and some
+    /// meta data.
     </span><span class="kw">pub fn </span>apply_message(<span class="kw-2">&amp;mut </span><span class="self">self</span>, msg: <span class="kw-2">&amp;</span>ChainMessage) -&gt; <span class="prelude-ty">Result</span>&lt;ApplyRet, anyhow::Error&gt; {
         check_message(msg.message())<span class="question-mark">?</span>;
 
@@ -627,7 +638,7 @@
 
         <span class="kw">if </span>!exit_code.is_success() {
             <span class="kw">match </span>exit_code.value() {
-                <span class="number">1</span>..=ExitCode::FIRST_USER_EXIT_CODE =&gt; {
+                <span class="number">1</span>..=&lt;ExitCode <span class="kw">as </span>Inner&gt;::FVM::FIRST_USER_EXIT_CODE =&gt; {
                     <span class="macro">log::debug!</span>(
                         <span class="string">&quot;Internal message execution failure. Exit code was {}&quot;</span>,
                         exit_code
@@ -708,8 +719,9 @@
     }
 }
 
-<span class="doccomment">/// Giving a fixed amount of coins for each block produced directly to the miner,
-/// on top of the gas spent, so the circulating supply isn&#39;t burned. Ignores penalties.
+<span class="doccomment">/// Giving a fixed amount of coins for each block produced directly to the
+/// miner, on top of the gas spent, so the circulating supply isn&#39;t burned.
+/// Ignores penalties.
 </span><span class="kw">pub struct </span>FixedRewardCalc {
     <span class="kw">pub </span>reward: TokenAmount,
 }
@@ -741,4 +753,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_interpreter" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_interpreter" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

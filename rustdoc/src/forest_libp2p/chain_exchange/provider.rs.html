@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/forest_libp2p/src/chain_exchange/provider.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>provider.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../forest_libp2p/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/forest_libp2p/src/chain_exchange/provider.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>provider.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../forest_libp2p/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -228,16 +228,28 @@
 <a href="#228" id="228">228</a>
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use </span>cid::Cid;
+</span><span class="kw">use </span>ahash::{HashMap, HashMapExt};
+<span class="kw">use </span>cid::Cid;
 <span class="kw">use </span>forest_blocks::{Tipset, TipsetKeys};
 <span class="kw">use </span>forest_chain::{ChainStore, Error <span class="kw">as </span>ChainError};
 <span class="kw">use </span>forest_db::Store;
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
 <span class="kw">use </span>log::debug;
-<span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use super</span>::{
     ChainExchangeRequest, ChainExchangeResponse, ChainExchangeResponseStatus, CompactedMessages,
@@ -245,7 +257,7 @@
 };
 
 <span class="doccomment">/// Builds chain exchange response out of chain data.
-</span><span class="kw">pub async fn </span>make_chain_exchange_response&lt;DB&gt;(
+</span><span class="kw">pub fn </span>make_chain_exchange_response&lt;DB&gt;(
     cs: <span class="kw-2">&amp;</span>ChainStore&lt;DB&gt;,
     request: <span class="kw-2">&amp;</span>ChainExchangeRequest,
 ) -&gt; ChainExchangeResponse
@@ -258,10 +270,7 @@
 
     <span class="kw">loop </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>tipset_bundle: TipsetBundle = TipsetBundle::default();
-        <span class="kw">let </span>tipset = <span class="kw">match </span>cs
-            .tipset_from_keys(<span class="kw-2">&amp;</span>TipsetKeys::new(curr_tipset_cids))
-            .<span class="kw">await
-        </span>{
+        <span class="kw">let </span>tipset = <span class="kw">match </span>cs.tipset_from_keys(<span class="kw-2">&amp;</span>TipsetKeys::new(curr_tipset_cids)) {
             <span class="prelude-val">Ok</span>(tipset) =&gt; tipset,
             <span class="prelude-val">Err</span>(err) =&gt; {
                 <span class="macro">debug!</span>(<span class="string">&quot;Cannot get tipset from keys: {}&quot;</span>, err);
@@ -283,7 +292,7 @@
                     <span class="kw">return </span>ChainExchangeResponse {
                         chain: <span class="macro">vec!</span>[],
                         status: ChainExchangeResponseStatus::InternalError,
-                        message: <span class="string">&quot;Can not fullfil the request&quot;</span>.to_owned(),
+                        message: <span class="string">&quot;Can not fulfil the request&quot;</span>.to_owned(),
                     };
                 }
             }
@@ -294,7 +303,8 @@
 
         <span class="kw">if </span>request.include_blocks() {
             <span class="comment">// TODO Cloning blocks isn&#39;t ideal, this can maybe be switched to serialize this
-            // data in the function. This may not be possible without overriding rpc in libp2p
+            // data in the function. This may not be possible without overriding rpc in
+            // libp2p
             </span>tipset_bundle.blocks = tipset.blocks().to_vec();
         }
 
@@ -380,13 +390,21 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::{HEADERS, MESSAGES};
-    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span>std::sync::Arc;
+
+    <span class="kw">use </span>forest_blocks::BlockHeader;
     <span class="kw">use </span>forest_db::MemoryDB;
     <span class="kw">use </span>forest_genesis::EXPORT_SR_40;
+    <span class="kw">use </span>forest_networks::ChainConfig;
     <span class="kw">use </span>fvm_ipld_car::load_car;
+    <span class="kw">use </span>fvm_shared::address::Address;
     <span class="kw">use </span>tokio::io::BufReader;
     <span class="kw">use </span>tokio_util::compat::TokioAsyncReadCompatExt;
+
+    <span class="kw">use super</span>::{
+        <span class="kw">super</span>::{HEADERS, MESSAGES},
+        <span class="kw-2">*</span>,
+    };
 
     <span class="kw">async fn </span>populate_db() -&gt; (Vec&lt;Cid&gt;, MemoryDB) {
         <span class="kw">let </span>db = MemoryDB::default();
@@ -400,15 +418,19 @@
     </span><span class="kw">async fn </span>compact_messages_test() {
         <span class="kw">let </span>(cids, db) = populate_db().<span class="kw">await</span>;
 
+        <span class="kw">let </span>gen_block = BlockHeader::builder()
+            .miner_address(Address::new_id(<span class="number">0</span>))
+            .build()
+            .unwrap();
+
         <span class="kw">let </span>response = make_chain_exchange_response(
-            <span class="kw-2">&amp;</span>ChainStore::new(db).<span class="kw">await</span>,
+            <span class="kw-2">&amp;</span>ChainStore::new(db, Arc::new(ChainConfig::default()), <span class="kw-2">&amp;</span>gen_block).unwrap(),
             <span class="kw-2">&amp;</span>ChainExchangeRequest {
                 start: cids,
                 request_len: <span class="number">2</span>,
                 options: HEADERS | MESSAGES,
             },
-        )
-        .<span class="kw">await</span>;
+        );
 
         <span class="comment">// The response will be loaded with tipsets 39 and 38.
         // See:
@@ -429,7 +451,8 @@
         </span><span class="macro">assert_eq!</span>(ts_39_msgs.secp_msgs.len(), <span class="number">22</span>);
         <span class="comment">// ... 12 unsigned messages
         </span><span class="macro">assert_eq!</span>(ts_39_msgs.bls_msgs.len(), <span class="number">12</span>);
-        <span class="comment">// Compacted message will contain 1 secp_includes array (since only 1 block in tipset).
+        <span class="comment">// Compacted message will contain 1 secp_includes array (since only 1 block in
+        // tipset).
         </span><span class="macro">assert_eq!</span>(ts_39_msgs.secp_msg_includes.len(), <span class="number">1</span>);
         <span class="comment">// and 1 bls_includes.
         </span><span class="macro">assert_eq!</span>(ts_39_msgs.bls_msg_includes.len(), <span class="number">1</span>);
@@ -451,7 +474,8 @@
         </span><span class="macro">assert_eq!</span>(ts_38_msgs.secp_msg_includes.len(), <span class="number">2</span>);
         <span class="macro">assert_eq!</span>(ts_38_msgs.bls_msg_includes.len(), <span class="number">2</span>);
 
-        <span class="comment">// Since the messages are duplicated in blocks, each `include` will have them all
+        <span class="comment">// Since the messages are duplicated in blocks, each `include` will have them
+        // all
         </span><span class="macro">assert_eq!</span>(ts_38_msgs.secp_msg_includes[<span class="number">0</span>].len(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(ts_38_msgs.bls_msg_includes[<span class="number">0</span>].len(), <span class="number">11</span>);
         <span class="macro">assert_eq!</span>(ts_38_msgs.secp_msg_includes[<span class="number">1</span>].len(), <span class="number">1</span>);
@@ -459,4 +483,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="forest_libp2p" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="forest_libp2p" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/forest_libp2p/src/behaviour.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>behaviour.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_libp2p/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/forest_libp2p/src/behaviour.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>behaviour.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_libp2p/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -140,77 +140,51 @@
 <a href="#140" id="140">140</a>
 <a href="#141" id="141">141</a>
 <a href="#142" id="142">142</a>
-<a href="#143" id="143">143</a>
-<a href="#144" id="144">144</a>
-<a href="#145" id="145">145</a>
-<a href="#146" id="146">146</a>
-<a href="#147" id="147">147</a>
-<a href="#148" id="148">148</a>
-<a href="#149" id="149">149</a>
-<a href="#150" id="150">150</a>
-<a href="#151" id="151">151</a>
-<a href="#152" id="152">152</a>
-<a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
-<a href="#156" id="156">156</a>
-<a href="#157" id="157">157</a>
-<a href="#158" id="158">158</a>
-<a href="#159" id="159">159</a>
-<a href="#160" id="160">160</a>
-<a href="#161" id="161">161</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use crate</span>::{
-    chain_exchange::{ChainExchangeCodec, ChainExchangeProtocolName},
-    gossip_params::{build_peer_score_params, build_peer_score_threshold},
-};
-<span class="kw">use crate</span>::{config::Libp2pConfig, discovery::DiscoveryBehaviour};
-<span class="kw">use crate</span>::{
-    discovery::DiscoveryConfig,
-    hello::{HelloCodec, HelloProtocolName},
-};
-<span class="kw">use </span>cid::Cid;
+</span><span class="kw">use </span>ahash::{HashMap, HashSet};
 <span class="kw">use </span>forest_encoding::blake2b_256;
-<span class="kw">use </span>libipld::store::StoreParams;
-<span class="kw">use </span>libp2p::swarm::NetworkBehaviour;
-<span class="kw">use </span>libp2p::{core::identity::Keypair, kad::QueryId};
-<span class="kw">use </span>libp2p::{core::PeerId, gossipsub::GossipsubMessage};
+<span class="kw">use </span>forest_libp2p_bitswap::BitswapBehaviour;
 <span class="kw">use </span>libp2p::{
+    core::{identity::Keypair, PeerId},
     gossipsub::{
-        error::PublishError, error::SubscriptionError, Gossipsub, GossipsubConfigBuilder,
-        IdentTopic <span class="kw">as </span>Topic, MessageAuthenticity, MessageId, ValidationMode,
+        error::{PublishError, SubscriptionError},
+        Gossipsub, GossipsubConfigBuilder, GossipsubMessage, IdentTopic <span class="kw">as </span>Topic,
+        MessageAuthenticity, MessageId, ValidationMode,
     },
+    identify,
+    kad::QueryId,
+    metrics::{Metrics, Recorder},
+    ping,
+    swarm::NetworkBehaviour,
     Multiaddr,
 };
-<span class="kw">use </span>libp2p::{identify, ping};
-<span class="kw">use </span>libp2p::{
-    metrics::{Metrics, Recorder},
-    request_response::{ProtocolSupport, RequestResponse, RequestResponseConfig},
-};
-<span class="kw">use </span>libp2p_bitswap::{Bitswap, BitswapConfig, BitswapStore};
-<span class="kw">use </span>log::{debug, warn};
-<span class="kw">use </span>std::collections::{HashMap, HashSet};
-<span class="kw">use </span>std::time::Duration;
+<span class="kw">use </span>log::warn;
 
-<span class="doccomment">/// Libp2p behavior for the Forest node. This handles all sub protocols needed for a Filecoin node.
+<span class="kw">use crate</span>::{
+    chain_exchange::ChainExchangeBehaviour,
+    config::Libp2pConfig,
+    discovery::{DiscoveryBehaviour, DiscoveryConfig},
+    gossip_params::{build_peer_score_params, build_peer_score_threshold},
+    hello::HelloBehaviour,
+};
+
+<span class="doccomment">/// Libp2p behavior for the Forest node. This handles all sub protocols needed
+/// for a Filecoin node.
 </span><span class="attr">#[derive(NetworkBehaviour)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>ForestBehaviour&lt;P: StoreParams&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>ForestBehaviour {
     gossipsub: Gossipsub,
     discovery: DiscoveryBehaviour,
     ping: ping::Behaviour,
     identify: identify::Behaviour,
-    <span class="kw">pub</span>(<span class="kw">super</span>) hello: RequestResponse&lt;HelloCodec&gt;,
-    <span class="kw">pub</span>(<span class="kw">super</span>) chain_exchange: RequestResponse&lt;ChainExchangeCodec&gt;,
-    <span class="kw">pub</span>(<span class="kw">super</span>) bitswap: Bitswap&lt;P&gt;,
+    <span class="kw">pub</span>(<span class="kw">super</span>) hello: HelloBehaviour,
+    <span class="kw">pub</span>(<span class="kw">super</span>) chain_exchange: ChainExchangeBehaviour,
+    <span class="kw">pub</span>(<span class="kw">super</span>) bitswap: BitswapBehaviour,
 }
 
-<span class="kw">impl</span>&lt;P&gt; Recorder&lt;ForestBehaviourEvent&lt;P&gt;&gt; <span class="kw">for </span>Metrics
-<span class="kw">where
-    </span>P: StoreParams,
-{
-    <span class="kw">fn </span>record(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>ForestBehaviourEvent&lt;P&gt;) {
+<span class="kw">impl </span>Recorder&lt;ForestBehaviourEvent&gt; <span class="kw">for </span>Metrics {
+    <span class="kw">fn </span>record(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>ForestBehaviourEvent) {
         <span class="kw">match </span>event {
             ForestBehaviourEvent::Gossipsub(e) =&gt; <span class="self">self</span>.record(e),
             ForestBehaviourEvent::Ping(ping_event) =&gt; <span class="self">self</span>.record(ping_event),
@@ -220,13 +194,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;P: StoreParams&gt; ForestBehaviour&lt;P&gt; {
-    <span class="kw">pub async fn </span>new&lt;DB: BitswapStore&lt;Params = P&gt;&gt;(
-        local_key: <span class="kw-2">&amp;</span>Keypair,
-        config: <span class="kw-2">&amp;</span>Libp2pConfig,
-        network_name: <span class="kw-2">&amp;</span>str,
-        db: DB,
-    ) -&gt; <span class="self">Self </span>{
+<span class="kw">impl </span>ForestBehaviour {
+    <span class="kw">pub fn </span>new(local_key: <span class="kw-2">&amp;</span>Keypair, config: <span class="kw-2">&amp;</span>Libp2pConfig, network_name: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>gs_config_builder = GossipsubConfigBuilder::default();
         gs_config_builder.max_transmit_size(<span class="number">1 </span>&lt;&lt; <span class="number">20</span>);
         gs_config_builder.validation_mode(ValidationMode::Strict);
@@ -249,8 +218,16 @@
             )
             .unwrap();
 
-        <span class="kw">let </span>bitswap = Bitswap::new(BitswapConfig::new(), db);
-        <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = bitswap.register_metrics(prometheus::default_registry()) {
+        <span class="kw">let </span>bitswap = BitswapBehaviour::new(
+            <span class="kw-2">&amp;</span>[
+                <span class="string">b&quot;/chain/ipfs/bitswap/1.2.0&quot;</span>,
+                <span class="string">b&quot;/chain/ipfs/bitswap/1.1.0&quot;</span>,
+                <span class="string">b&quot;/chain/ipfs/bitswap/1.0.0&quot;</span>,
+                <span class="string">b&quot;/chain/ipfs/bitswap&quot;</span>,
+            ],
+            Default::default(),
+        );
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = forest_libp2p_bitswap::register_metrics(prometheus::default_registry()) {
             <span class="macro">warn!</span>(<span class="string">&quot;Fail to register prometheus metrics for libp2p_bitswap: {err}&quot;</span>);
         }
 
@@ -262,24 +239,17 @@
             <span class="comment">// TODO allow configuring this through config.
             </span>.discovery_limit(config.target_peer_count <span class="kw">as </span>u64);
 
-        <span class="kw">let </span>hp = std::iter::once((HelloProtocolName, ProtocolSupport::Full));
-        <span class="kw">let </span>cp = std::iter::once((ChainExchangeProtocolName, ProtocolSupport::Full));
-
-        <span class="kw">let </span><span class="kw-2">mut </span>req_res_config = RequestResponseConfig::default();
-        req_res_config.set_request_timeout(Duration::from_secs(<span class="number">20</span>));
-        req_res_config.set_connection_keep_alive(Duration::from_secs(<span class="number">20</span>));
-
         ForestBehaviour {
             gossipsub,
-            discovery: discovery_config.finish().<span class="kw">await</span>,
+            discovery: discovery_config.finish(),
             ping: Default::default(),
             identify: identify::Behaviour::new(identify::Config::new(
                 <span class="string">&quot;ipfs/0.1.0&quot;</span>.into(),
                 local_key.public(),
             )),
             bitswap,
-            hello: RequestResponse::new(HelloCodec::default(), hp, req_res_config.clone()),
-            chain_exchange: RequestResponse::new(ChainExchangeCodec::default(), cp, req_res_config),
+            hello: HelloBehaviour::default(),
+            chain_exchange: ChainExchangeBehaviour::default(),
         }
     }
 
@@ -303,7 +273,7 @@
     }
 
     <span class="doccomment">/// Returns a set of peer ids
-    </span><span class="kw">pub fn </span>peers(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;PeerId&gt; {
+    </span><span class="kw">pub fn </span>peers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;PeerId&gt; {
         <span class="self">self</span>.discovery.peers()
     }
 
@@ -311,14 +281,6 @@
     </span><span class="kw">pub fn </span>peer_addresses(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashMap&lt;PeerId, Vec&lt;Multiaddr&gt;&gt; {
         <span class="self">self</span>.discovery.peer_addresses()
     }
-
-    <span class="doccomment">/// Send a request for data over bit-swap
-    </span><span class="kw">pub fn </span>want_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cid: Cid) -&gt; anyhow::Result&lt;libp2p_bitswap::QueryId&gt; {
-        <span class="macro">debug!</span>(<span class="string">&quot;want {}&quot;</span>, cid.to_string());
-        <span class="kw">let </span>peers = <span class="self">self</span>.discovery.peers().iter().cloned().collect();
-        <span class="kw">let </span>query_id = <span class="self">self</span>.bitswap.sync(cid, peers, [cid].into_iter());
-        <span class="prelude-val">Ok</span>(query_id)
-    }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_libp2p" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_libp2p" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

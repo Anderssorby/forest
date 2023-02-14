@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/chain_sync/src/chain_muxer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>chain_muxer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_chain_sync/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/chain_sync/src/chain_muxer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>chain_muxer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_chain_sync/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -982,55 +982,52 @@
 <a href="#982" id="982">982</a>
 <a href="#983" id="983">983</a>
 <a href="#984" id="984">984</a>
-<a href="#985" id="985">985</a>
-<a href="#986" id="986">986</a>
-<a href="#987" id="987">987</a>
-<a href="#988" id="988">988</a>
-<a href="#989" id="989">989</a>
-<a href="#990" id="990">990</a>
-<a href="#991" id="991">991</a>
-<a href="#992" id="992">992</a>
-<a href="#993" id="993">993</a>
-<a href="#994" id="994">994</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use </span><span class="kw">crate</span>::bad_block_cache::BadBlockCache;
-<span class="kw">use </span><span class="kw">crate</span>::consensus::Consensus;
-<span class="kw">use </span><span class="kw">crate</span>::metrics;
-<span class="kw">use </span><span class="kw">crate</span>::network_context::SyncNetworkContext;
-<span class="kw">use </span><span class="kw">crate</span>::sync_state::SyncState;
-<span class="kw">use </span><span class="kw">crate</span>::tipset_syncer::{
-    TipsetProcessor, TipsetProcessorError, TipsetRangeSyncer, TipsetRangeSyncerError,
+</span><span class="kw">use </span>std::{
+    pin::Pin,
+    sync::Arc,
+    task::{Context, Poll},
+    time::SystemTime,
 };
-<span class="kw">use </span><span class="kw">crate</span>::validation::{TipsetValidationError, TipsetValidator};
+
 <span class="kw">use </span>cid::Cid;
+<span class="kw">use </span>forest_actor_interface::EPOCHS_IN_DAY;
 <span class="kw">use </span>forest_blocks::{
     Block, Error <span class="kw">as </span>ForestBlockError, FullTipset, GossipBlock, Tipset, TipsetKeys,
 };
 <span class="kw">use </span>forest_chain::{ChainStore, Error <span class="kw">as </span>ChainStoreError};
 <span class="kw">use </span>forest_db::Store;
 <span class="kw">use </span>forest_libp2p::{
-    hello::HelloRequest, rpc::RequestResponseError, NetworkEvent, NetworkMessage, PeerId,
-    PubsubMessage,
+    hello::HelloRequest, NetworkEvent, NetworkMessage, PeerId, PeerManager, PubsubMessage,
 };
 <span class="kw">use </span>forest_message::SignedMessage;
 <span class="kw">use </span>forest_message_pool::{MessagePool, Provider};
 <span class="kw">use </span>forest_state_manager::StateManager;
-<span class="kw">use </span>futures::stream::FuturesUnordered;
-<span class="kw">use </span>futures::StreamExt;
-<span class="kw">use </span>futures::{future::try_join_all, future::Future, try_join};
+<span class="kw">use </span>futures::{
+    future::{try_join_all, Future},
+    stream::FuturesUnordered,
+    try_join, StreamExt,
+};
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
 <span class="kw">use </span>fvm_shared::message::Message;
 <span class="kw">use </span>log::{debug, error, info, trace, warn};
+<span class="kw">use </span>parking_lot::RwLock;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
-<span class="kw">use </span>std::pin::Pin;
-<span class="kw">use </span>std::task::{Context, Poll};
 <span class="kw">use </span>thiserror::Error;
-<span class="kw">use </span>tokio::sync::RwLock;
 
-<span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>std::time::SystemTime;
+<span class="kw">use crate</span>::{
+    bad_block_cache::BadBlockCache,
+    consensus::Consensus,
+    metrics,
+    network_context::SyncNetworkContext,
+    sync_state::SyncState,
+    tipset_syncer::{
+        TipsetProcessor, TipsetProcessorError, TipsetRangeSyncer, TipsetRangeSyncerError,
+    },
+    validation::{TipsetValidationError, TipsetValidator},
+};
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>WorkerState = Arc&lt;RwLock&lt;SyncState&gt;&gt;;
 
@@ -1065,17 +1062,9 @@
 </span><span class="kw">pub struct </span>SyncConfig {
     <span class="doccomment">/// Request window length for tipsets during chain exchange
     </span><span class="kw">pub </span>req_window: i64,
-    <span class="doccomment">/// Sample size of tipsets to acquire before determining what the network head is
+    <span class="doccomment">/// Sample size of tipsets to acquire before determining what the network
+    /// head is
     </span><span class="kw">pub </span>tipset_sample_size: usize,
-}
-
-<span class="kw">impl </span>SyncConfig {
-    <span class="kw">pub fn </span>new(req_window: i64, tipset_sample_size: usize) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            req_window,
-            tipset_sample_size,
-        }
-    }
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>SyncConfig {
@@ -1111,7 +1100,8 @@
     </span>DoNotProcess,
 }
 
-<span class="doccomment">/// The `ChainMuxer` handles events from the P2P network and orchestrates the chain synchronization.
+<span class="doccomment">/// The `ChainMuxer` handles events from the P2P network and orchestrates the
+/// chain synchronization.
 </span><span class="kw">pub struct </span>ChainMuxer&lt;DB, M, C: Consensus&gt; {
     <span class="doccomment">/// State of the `ChainSyncer` `Future` implementation
     </span>state: ChainMuxerState&lt;C&gt;,
@@ -1132,7 +1122,8 @@
     </span>genesis: Arc&lt;Tipset&gt;,
 
     <span class="doccomment">/// Bad blocks cache, updates based on invalid state transitions.
-    /// Will mark any invalid blocks and all children as bad in this bounded cache
+    /// Will mark any invalid blocks and all children as bad in this bounded
+    /// cache
     </span>bad_blocks: Arc&lt;BadBlockCache&gt;,
 
     <span class="doccomment">/// Incoming network events to be handled by synchronizer
@@ -1161,6 +1152,7 @@
     </span><span class="kw">pub fn </span>new(
         consensus: Arc&lt;C&gt;,
         state_manager: Arc&lt;StateManager&lt;DB&gt;&gt;,
+        peer_manager: Arc&lt;PeerManager&gt;,
         mpool: Arc&lt;MessagePool&lt;M&gt;&gt;,
         network_send: flume::Sender&lt;NetworkMessage&gt;,
         network_rx: flume::Receiver&lt;NetworkEvent&gt;,
@@ -1171,7 +1163,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ChainMuxerError&lt;C&gt;&gt; {
         <span class="kw">let </span>network = SyncNetworkContext::new(
             network_send,
-            Default::default(),
+            peer_manager,
             state_manager.blockstore().clone(),
         );
 
@@ -1191,7 +1183,8 @@
         })
     }
 
-    <span class="doccomment">/// Returns a clone of the bad blocks cache to be used outside of chain sync.
+    <span class="doccomment">/// Returns a clone of the bad blocks cache to be used outside of chain
+    /// sync.
     </span><span class="kw">pub fn </span>bad_blocks_cloned(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;BadBlockCache&gt; {
         <span class="self">self</span>.bad_blocks.clone()
     }
@@ -1208,7 +1201,7 @@
         tipset_keys: TipsetKeys,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;FullTipset, ChainMuxerError&lt;C&gt;&gt; {
         <span class="comment">// Attempt to load from the store
-        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(full_tipset) = <span class="self">Self</span>::load_full_tipset(chain_store, tipset_keys.clone()).<span class="kw">await </span>{
+        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(full_tipset) = <span class="self">Self</span>::load_full_tipset(chain_store, tipset_keys.clone()) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(full_tipset);
         }
         <span class="comment">// Load from the network
@@ -1218,13 +1211,13 @@
             </span>.map_err(ChainMuxerError::ChainExchange)
     }
 
-    <span class="kw">async fn </span>load_full_tipset(
+    <span class="kw">fn </span>load_full_tipset(
         chain_store: Arc&lt;ChainStore&lt;DB&gt;&gt;,
         tipset_keys: TipsetKeys,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;FullTipset, ChainMuxerError&lt;C&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>blocks = Vec::new();
         <span class="comment">// Retrieve tipset from store based on passed in TipsetKeys
-        </span><span class="kw">let </span>ts = chain_store.tipset_from_keys(<span class="kw-2">&amp;</span>tipset_keys).<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>ts = chain_store.tipset_from_keys(<span class="kw-2">&amp;</span>tipset_keys)<span class="question-mark">?</span>;
         <span class="kw">for </span>header <span class="kw">in </span>ts.blocks() {
             <span class="comment">// Retrieve bls and secp messages from specified BlockHeader
             </span><span class="kw">let </span>(bls_msgs, secp_msgs) =
@@ -1249,13 +1242,13 @@
         genesis_block_cid: Cid,
     ) {
         <span class="comment">// Query the heaviest TipSet from the store
-        </span><span class="kw">let </span>heaviest = chain_store.heaviest_tipset().<span class="kw">await</span>.unwrap();
+        </span><span class="kw">let </span>heaviest = chain_store.heaviest_tipset();
         <span class="kw">if </span>network.peer_manager().is_peer_new(<span class="kw-2">&amp;</span>peer_id).<span class="kw">await </span>{
             <span class="comment">// Since the peer is new, send them a hello request
             </span><span class="kw">let </span>request = HelloRequest {
                 heaviest_tip_set: heaviest.cids().to_vec(),
                 heaviest_tipset_height: heaviest.epoch(),
-                heaviest_tipset_weight: heaviest.weight().clone(),
+                heaviest_tipset_weight: heaviest.weight().clone().into(),
                 genesis_cid: genesis_block_cid,
             };
             <span class="kw">let </span>(peer_id, moment_sent, response) =
@@ -1272,19 +1265,9 @@
 
             <span class="comment">// Update the peer metadata based on the response
             </span><span class="kw">match </span>response {
-                <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(_res)) =&gt; {
+                <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; {
                     network.peer_manager().log_success(peer_id, dur).<span class="kw">await</span>;
                 }
-                <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(why)) =&gt; <span class="kw">match </span>why {
-                    RequestResponseError::ConnectionClosed
-                    | RequestResponseError::DialFailure
-                    | RequestResponseError::UnsupportedProtocols =&gt; {
-                        network.peer_manager().mark_peer_bad(peer_id).<span class="kw">await</span>;
-                    }
-                    RequestResponseError::Timeout =&gt; {
-                        network.peer_manager().log_failure(peer_id, dur).<span class="kw">await</span>;
-                    }
-                },
                 <span class="prelude-val">None </span>=&gt; {
                     network.peer_manager().log_failure(peer_id, dur).<span class="kw">await</span>;
                 }
@@ -1308,18 +1291,24 @@
             source,
         );
 
+        <span class="kw">let </span>epoch = block.header.epoch();
+
+        <span class="macro">log::debug!</span>(
+            <span class="string">&quot;Getting messages of gossipblock, epoch: {epoch}, block: {}&quot;</span>,
+            block.header.cid()
+        );
         <span class="comment">// Get bls_message in the store or over Bitswap
         </span><span class="kw">let </span>bls_messages: Vec&lt;<span class="kw">_</span>&gt; = block
             .bls_messages
             .into_iter()
-            .map(|m| network.bitswap_get::&lt;Message&gt;(m))
+            .map(|m| network.bitswap_get::&lt;Message&gt;(epoch, m))
             .collect();
 
         <span class="comment">// Get secp_messages in the store or over Bitswap
         </span><span class="kw">let </span>secp_messages: Vec&lt;<span class="kw">_</span>&gt; = block
             .secpk_messages
             .into_iter()
-            .map(|m| network.bitswap_get::&lt;SignedMessage&gt;(m))
+            .map(|m| network.bitswap_get::&lt;SignedMessage&gt;(epoch, m))
             .collect();
 
         <span class="kw">let </span>(bls_messages, secp_messages) =
@@ -1336,8 +1325,8 @@
         <span class="prelude-val">Ok</span>(FullTipset::new(<span class="macro">vec!</span>[block]).unwrap())
     }
 
-    <span class="kw">async fn </span>handle_pubsub_message(mem_pool: Arc&lt;MessagePool&lt;M&gt;&gt;, message: SignedMessage) {
-        <span class="kw">if let </span><span class="prelude-val">Err</span>(why) = mem_pool.add(message).<span class="kw">await </span>{
+    <span class="kw">fn </span>handle_pubsub_message(mem_pool: Arc&lt;MessagePool&lt;M&gt;&gt;, message: SignedMessage) {
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(why) = mem_pool.add(message) {
             <span class="macro">debug!</span>(
                 <span class="string">&quot;GossipSub message could not be added to the mem pool: {}&quot;</span>,
                 why
@@ -1438,8 +1427,7 @@
                         .with_label_values(<span class="kw-2">&amp;</span>[metrics::values::PUBSUB_MESSAGE])
                         .inc();
                     <span class="kw">if let </span>PubsubMessageProcessingStrategy::Process = message_processing_strategy {
-                        <span class="comment">// Spawn and immediately move on to the next event
-                        </span>tokio::task::spawn(<span class="self">Self</span>::handle_pubsub_message(mem_pool.clone(), m));
+                        <span class="self">Self</span>::handle_pubsub_message(mem_pool, m);
                     }
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
                 }
@@ -1468,30 +1456,23 @@
                     .inc();
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
             }
-            NetworkEvent::BitswapRequestOutbound { .. } =&gt; {
-                metrics::LIBP2P_MESSAGE_TOTAL
-                    .with_label_values(<span class="kw-2">&amp;</span>[metrics::values::BITSWAP_BLOCK_REQUEST_OUTBOUND])
-                    .inc();
-                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
-            }
-            NetworkEvent::BitswapResponseInbound { .. } =&gt; {
-                metrics::LIBP2P_MESSAGE_TOTAL
-                    .with_label_values(<span class="kw-2">&amp;</span>[metrics::values::BITSWAP_BLOCK_RESPONSE_INBOUND])
-                    .inc();
-                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
-            }
         };
 
+        <span class="kw">if </span>tipset.epoch() + EPOCHS_IN_DAY &lt; chain_store.heaviest_tipset().epoch() {
+            <span class="macro">debug!</span>(
+                <span class="string">&quot;Skip processing tipset at epoch {} from {source} that is too old&quot;</span>,
+                tipset.epoch()
+            );
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+        }
+
         <span class="comment">// Validate tipset
-        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(why) = TipsetValidator(<span class="kw-2">&amp;</span>tipset)
-            .validate(
-                chain_store.clone(),
-                bad_block_cache.clone(),
-                genesis.clone(),
-                block_delay,
-            )
-            .<span class="kw">await
-        </span>{
+        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(why) = TipsetValidator(<span class="kw-2">&amp;</span>tipset).validate(
+            chain_store.clone(),
+            bad_block_cache.clone(),
+            genesis.clone(),
+            block_delay,
+        ) {
             metrics::INVALID_TIPSET_TOTAL.inc();
             <span class="macro">warn!</span>(
                 <span class="string">&quot;Validating tipset received through GossipSub failed: {}&quot;</span>,
@@ -1577,7 +1558,7 @@
 
             <span class="comment">// Query the heaviest tipset in the store
             // Unwrapping is fine because the store always has at least one tipset
-            </span><span class="kw">let </span>local_head = chain_store.heaviest_tipset().<span class="kw">await</span>.unwrap();
+            </span><span class="kw">let </span>local_head = chain_store.heaviest_tipset();
 
             <span class="comment">// We are in sync if the local head weight is heavier or
             // as heavy as the network head
@@ -1687,8 +1668,9 @@
         tasks.push(stream_processor);
 
         Box::pin(<span class="kw">async move </span>{
-            <span class="comment">// The stream processor will not return unless the p2p event stream is closed. In this case it will return with an error.
-            // Only wait for one task to complete before returning to the caller
+            <span class="comment">// The stream processor will not return unless the p2p event stream is closed.
+            // In this case it will return with an error. Only wait for one task
+            // to complete before returning to the caller
             </span><span class="kw">match </span>tasks.next().<span class="kw">await </span>{
                 <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="kw">_</span>)) =&gt; <span class="prelude-val">Ok</span>(()),
                 <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(e)) =&gt; <span class="prelude-val">Err</span>(e),
@@ -1783,12 +1765,7 @@
 
                     <span class="comment">// Validate that the tipset is heavier that the heaviest
                     // tipset in the store
-                    </span><span class="kw">if </span>!chain_store
-                        .heaviest_tipset()
-                        .<span class="kw">await
-                        </span>.map(|heaviest| tipset.weight() &gt;= heaviest.weight())
-                        .unwrap_or(<span class="bool-val">true</span>)
-                    {
+                    </span><span class="kw">if </span>tipset.weight() &lt; chain_store.heaviest_tipset().weight() {
                         <span class="comment">// Only send heavier Tipsets to the TipsetProcessor
                         </span><span class="macro">trace!</span>(<span class="string">&quot;Dropping tipset [Key = {:?}] that is not heavier than the heaviest tipset in the store&quot;</span>, tipset.key());
                         <span class="kw">continue</span>;
@@ -1857,7 +1834,8 @@
             <span class="kw">match </span><span class="self">self</span>.state {
                 ChainMuxerState::Idle =&gt; {
                     <span class="kw">if </span><span class="self">self</span>.sync_config.tipset_sample_size == <span class="number">0 </span>{
-                        <span class="comment">// A standalone node might use this option to not be stuck waiting for P2P messages.
+                        <span class="comment">// A standalone node might use this option to not be stuck waiting for P2P
+                        // messages.
                         </span><span class="macro">info!</span>(<span class="string">&quot;Skip evaluating network head, assume in-sync.&quot;</span>);
                         <span class="self">self</span>.state = ChainMuxerState::Follow(<span class="self">self</span>.follow(<span class="prelude-val">None</span>));
                     } <span class="kw">else </span>{
@@ -1934,7 +1912,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span>std::convert::TryFrom;
 
-    <span class="kw">use </span><span class="kw">crate</span>::validation::TipsetValidator;
+    <span class="kw">use </span>base64::{prelude::BASE64_STANDARD, Engine};
     <span class="kw">use </span>cid::Cid;
     <span class="kw">use </span>forest_blocks::{BlockHeader, Tipset};
     <span class="kw">use </span>forest_db::MemoryDB;
@@ -1942,6 +1920,8 @@
     <span class="kw">use </span>forest_networks::{ChainConfig, Height};
     <span class="kw">use </span>forest_test_utils::construct_messages;
     <span class="kw">use </span>fvm_shared::{address::Address, message::Message};
+
+    <span class="kw">use </span><span class="kw">crate</span>::validation::TipsetValidator;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>compute_msg_meta_given_msgs_test() {
@@ -1962,9 +1942,9 @@
     </span><span class="kw">fn </span>empty_msg_meta_vector() {
         <span class="kw">let </span>blockstore = MemoryDB::default();
         <span class="kw">let </span>usm: Vec&lt;Message&gt; =
-            fvm_ipld_encoding::from_slice(<span class="kw-2">&amp;</span>base64::decode(<span class="string">&quot;gA==&quot;</span>).unwrap()).unwrap();
+            fvm_ipld_encoding::from_slice(<span class="kw-2">&amp;</span>BASE64_STANDARD.decode(<span class="string">&quot;gA==&quot;</span>).unwrap()).unwrap();
         <span class="kw">let </span>sm: Vec&lt;SignedMessage&gt; =
-            fvm_ipld_encoding::from_slice(<span class="kw-2">&amp;</span>base64::decode(<span class="string">&quot;gA==&quot;</span>).unwrap()).unwrap();
+            fvm_ipld_encoding::from_slice(<span class="kw-2">&amp;</span>BASE64_STANDARD.decode(<span class="string">&quot;gA==&quot;</span>).unwrap()).unwrap();
 
         <span class="macro">assert_eq!</span>(
             TipsetValidator::compute_msg_root(<span class="kw-2">&amp;</span>blockstore, <span class="kw-2">&amp;</span>usm, <span class="kw-2">&amp;</span>sm)
@@ -1981,10 +1961,10 @@
             .miner_address(Address::new_id(<span class="number">0</span>))
             .build()
             .unwrap();
-        <span class="kw">let </span>ts = Tipset::new(<span class="macro">vec!</span>[h0]).unwrap();
+        <span class="kw">let </span>ts = Tipset::from(h0);
         <span class="kw">let </span>smoke_height = ChainConfig::default().epoch(Height::Smoke);
         <span class="macro">assert!</span>(forest_chain::compute_base_fee(<span class="kw-2">&amp;</span>blockstore, <span class="kw-2">&amp;</span>ts, smoke_height).is_err());
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_chain_sync" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_chain_sync" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/forest_libp2p/src/rpc/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../forest_libp2p/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/forest_libp2p/src/rpc/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../forest_libp2p/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -157,25 +157,45 @@
 <a href="#157" id="157">157</a>
 <a href="#158" id="158">158</a>
 <a href="#159" id="159">159</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
 </span><span class="kw">mod </span>decoder;
-<span class="kw">use </span>decoder::DagCborDecodingReader;
+<span class="kw">use </span>std::{io, marker::PhantomData, time::Duration};
 
 <span class="kw">use </span>async_trait::async_trait;
+<span class="kw">use </span>decoder::DagCborDecodingReader;
 <span class="kw">use </span>futures::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>libp2p::core::ProtocolName;
-<span class="kw">use </span>libp2p::request_response::OutboundFailure;
-<span class="kw">use </span>libp2p::request_response::RequestResponseCodec;
-<span class="kw">use </span>serde::de::DeserializeOwned;
-<span class="kw">use </span>serde::Serialize;
-<span class="kw">use </span>std::io;
-<span class="kw">use </span>std::marker::PhantomData;
-<span class="kw">use </span>std::time::Duration;
+<span class="kw">use </span>libp2p::{
+    core::ProtocolName,
+    request_response::{OutboundFailure, RequestResponseCodec},
+};
+<span class="kw">use </span>serde::{de::DeserializeOwned, Serialize};
 
-<span class="doccomment">/// Generic `Cbor` `RequestResponse` type. This is just needed to satisfy [`RequestResponseCodec`]
-/// for Hello and `ChainExchange` protocols without duplication.
+<span class="doccomment">/// Generic `Cbor` `RequestResponse` type. This is just needed to satisfy
+/// [`RequestResponseCodec`] for Hello and `ChainExchange` protocols without
+/// duplication.
 </span><span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>CborRequestResponse&lt;P, RQ, RS&gt; {
     protocol: PhantomData&lt;P&gt;,
@@ -193,11 +213,12 @@
     }
 }
 
-<span class="doccomment">/// Libp2p request response outbound error type. This indicates a failure sending a request to
-/// a peer. This is different from a failure response from a node, as this is an error that
-/// prevented a response.
+<span class="doccomment">/// Libp2p request response outbound error type. This indicates a failure
+/// sending a request to a peer. This is different from a failure response from
+/// a node, as this is an error that prevented a response.
 ///
-/// This type mirrors the internal libp2p type, but this avoids having to expose that internal type.
+/// This type mirrors the internal libp2p type, but this avoids having to expose
+/// that internal type.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub enum </span>RequestResponseError {
     <span class="doccomment">/// The request could not be sent because a dialing attempt failed.
@@ -242,7 +263,7 @@
     <span class="kw">where
         </span>T: AsyncRead + Unpin + Send,
     {
-        read_and_decode(io).<span class="kw">await
+        read_request_and_decode(io).<span class="kw">await
     </span>}
 
     <span class="kw">async fn </span>read_response&lt;T&gt;(
@@ -253,8 +274,11 @@
     <span class="kw">where
         </span>T: AsyncRead + Unpin + Send,
     {
-        read_and_decode(io).<span class="kw">await
-    </span>}
+        <span class="kw">let </span><span class="kw-2">mut </span>bytes = <span class="macro">vec!</span>[];
+        io.read_to_end(<span class="kw-2">&amp;mut </span>bytes).<span class="kw">await</span><span class="question-mark">?</span>;
+        serde_ipld_dagcbor::de::from_reader(bytes.as_slice())
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))
+    }
 
     <span class="kw">async fn </span>write_request&lt;T&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -281,20 +305,38 @@
     </span>}
 }
 
-<span class="kw">async fn </span>read_and_decode&lt;IO, T&gt;(io: <span class="kw-2">&amp;mut </span>IO) -&gt; io::Result&lt;T&gt;
+<span class="comment">// Because of how lotus implements the protocol, it will deadlock when calling
+// `io.ReadToEnd` on requests.
+//
+// for sending requests, the flow in lotus is
+// 1. write encoded request bytes
+// 2. wait for response
+// 3. close request stream, which sends `FIN` header over `yamux` protocol
+// if we call `io.ReadToEnd` before `FIN` is sent, it will deadlock
+//
+// but for sending responses, the flow in lotus is
+// 1. receive request
+// 2. write encode response bytes
+// 3. close response stream, which sends `FIN` header over `yamux` protocol
+// and we call `io.ReadToEnd` after `FIN` is sent, it will not deadlock
+//
+// Note: `FIN` - Performs a half-close of a stream. May be sent with a data
+// message or window update. See &lt;https://github.com/libp2p/go-yamux/blob/master/spec.md#flag-field&gt;
+//
+// `io` is essentially [yamux::Stream](https://docs.rs/yamux/0.11.0/yamux/struct.Stream.html)
+//
+</span><span class="kw">async fn </span>read_request_and_decode&lt;IO, T&gt;(io: <span class="kw-2">&amp;mut </span>IO) -&gt; io::Result&lt;T&gt;
 <span class="kw">where
     </span>IO: AsyncRead + Unpin,
     T: serde::de::DeserializeOwned,
 {
-    <span class="comment">// FIXME: investigate the best value here, 2MB is not enough for mainnet epoch 2419928
-    // Issue: https://github.com/ChainSafe/forest/issues/2362
-    </span><span class="kw">const </span>MAX_BYTES_ALLOWED: usize = <span class="number">200 </span>* <span class="number">1024 </span>* <span class="number">1024</span>; <span class="comment">// messages over 200MB are likely malicious
+    <span class="kw">const </span>MAX_BYTES_ALLOWED: usize = <span class="number">2 </span>* <span class="number">1024 </span>* <span class="number">1024</span>; <span class="comment">// messages over 2MB are likely malicious
     </span><span class="kw">const </span>TIMEOUT: Duration = Duration::from_secs(<span class="number">30</span>);
 
     <span class="comment">// Currently the protocol does not send length encoded message,
     // and we use `decode-success-with-no-trailing-data` to detect end of frame
-    // just like what `FramedRead` does, so it&#39;s possible to cause deadlock at `io.poll_ready`
-    // Adding timeout here to mitigate the issue
+    // just like what `FramedRead` does, so it&#39;s possible to cause deadlock at
+    // `io.poll_ready` Adding timeout here to mitigate the issue
     </span><span class="kw">match </span>tokio::time::timeout(TIMEOUT, DagCborDecodingReader::new(io, MAX_BYTES_ALLOWED)).<span class="kw">await </span>{
         <span class="prelude-val">Ok</span>(r) =&gt; r,
         <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
@@ -317,4 +359,4 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="forest_libp2p" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="forest_libp2p" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

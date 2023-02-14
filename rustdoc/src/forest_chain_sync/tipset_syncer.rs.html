@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/chain_sync/src/tipset_syncer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>tipset_syncer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_chain_sync/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/chain_sync/src/tipset_syncer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>tipset_syncer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_chain_sync/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1691,58 +1691,54 @@
 <a href="#1691" id="1691">1691</a>
 <a href="#1692" id="1692">1692</a>
 <a href="#1693" id="1693">1693</a>
-<a href="#1694" id="1694">1694</a>
-<a href="#1695" id="1695">1695</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use </span>forest_utils::io::ProgressBar;
-<span class="kw">use </span>futures::stream::FuturesUnordered;
-<span class="kw">use </span>futures::StreamExt;
-<span class="kw">use </span>futures::TryFutureExt;
-<span class="kw">use </span>fvm_shared::bigint::BigInt;
-<span class="kw">use </span>fvm_shared::crypto::signature::ops::verify_bls_aggregate;
-<span class="kw">use </span>log::{debug, error, info, trace, warn};
-<span class="kw">use </span>nonempty::NonEmpty;
-<span class="kw">use </span>std::cmp::{min, Ordering};
-<span class="kw">use </span>std::collections::{HashMap, HashSet};
-<span class="kw">use </span>std::convert::TryFrom;
-<span class="kw">use </span>std::future::Future;
-<span class="kw">use </span>std::pin::Pin;
-<span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>std::task::{Context, Poll};
-<span class="kw">use </span>std::time::{SystemTime, UNIX_EPOCH};
-<span class="kw">use </span>thiserror::Error;
+</span><span class="kw">use </span>std::{
+    cmp::{min, Ordering},
+    convert::TryFrom,
+    future::Future,
+    pin::Pin,
+    sync::Arc,
+    task::{Context, Poll},
+    time::{SystemTime, UNIX_EPOCH},
+};
 
-<span class="kw">use </span><span class="kw">crate</span>::bad_block_cache::BadBlockCache;
-<span class="kw">use </span><span class="kw">crate</span>::consensus::{collect_errs, Consensus};
-<span class="kw">use </span><span class="kw">crate</span>::metrics;
-<span class="kw">use </span><span class="kw">crate</span>::network_context::SyncNetworkContext;
-<span class="kw">use </span><span class="kw">crate</span>::sync_state::SyncStage;
-<span class="kw">use </span><span class="kw">crate</span>::validation::TipsetValidator;
+<span class="kw">use </span>ahash::{HashMap, HashMapExt, HashSet};
 <span class="kw">use </span>cid::Cid;
 <span class="kw">use </span>forest_actor_interface::is_account_actor;
 <span class="kw">use </span>forest_blocks::{
     Block, BlockHeader, Error <span class="kw">as </span>ForestBlockError, FullTipset, Tipset, TipsetKeys,
 };
-<span class="kw">use </span>forest_chain::Error <span class="kw">as </span>ChainStoreError;
-<span class="kw">use </span>forest_chain::{persist_objects, ChainStore};
+<span class="kw">use </span>forest_chain::{persist_objects, ChainStore, Error <span class="kw">as </span>ChainStoreError};
 <span class="kw">use </span>forest_db::Store;
 <span class="kw">use </span>forest_libp2p::chain_exchange::TipsetBundle;
-<span class="kw">use </span>forest_message::message::valid_for_block_inclusion;
-<span class="kw">use </span>forest_message::Message <span class="kw">as </span>MessageTrait;
+<span class="kw">use </span>forest_message::{message::valid_for_block_inclusion, Message <span class="kw">as </span>MessageTrait};
 <span class="kw">use </span>forest_networks::Height;
-<span class="kw">use </span>forest_state_manager::Error <span class="kw">as </span>StateManagerError;
-<span class="kw">use </span>forest_state_manager::StateManager;
-<span class="kw">use </span>futures::Stream;
+<span class="kw">use </span>forest_shim::state_tree::StateTree;
+<span class="kw">use </span>forest_state_manager::{Error <span class="kw">as </span>StateManagerError, StateManager};
+<span class="kw">use </span>forest_utils::io::ProgressBar;
+<span class="kw">use </span>futures::{stream::FuturesUnordered, Stream, StreamExt, TryFutureExt};
 <span class="kw">use </span>fvm::gas::price_list_by_network_version;
-<span class="kw">use </span>fvm::state_tree::StateTree;
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
 <span class="kw">use </span>fvm_ipld_encoding::Cbor;
-<span class="kw">use </span>fvm_shared::address::Address;
-<span class="kw">use </span>fvm_shared::clock::ChainEpoch;
-<span class="kw">use </span>fvm_shared::message::Message;
-<span class="kw">use </span>fvm_shared::{ALLOWABLE_CLOCK_DRIFT, BLOCK_GAS_LIMIT};
+<span class="kw">use </span>fvm_shared::{
+    address::Address, clock::ChainEpoch, crypto::signature::ops::verify_bls_aggregate,
+    message::Message, ALLOWABLE_CLOCK_DRIFT, BLOCK_GAS_LIMIT,
+};
+<span class="kw">use </span>log::{debug, error, info, trace, warn};
+<span class="kw">use </span>nonempty::NonEmpty;
+<span class="kw">use </span>num::BigInt;
+<span class="kw">use </span>thiserror::Error;
+
+<span class="kw">use crate</span>::{
+    bad_block_cache::BadBlockCache,
+    consensus::{collect_errs, Consensus},
+    metrics,
+    network_context::SyncNetworkContext,
+    sync_state::SyncStage,
+    validation::TipsetValidator,
+};
 
 <span class="kw">const </span>MAX_TIPSETS_TO_REQUEST: u64 = <span class="number">100</span>;
 
@@ -1823,7 +1819,8 @@
 }
 
 <span class="kw">impl</span>&lt;C: Consensus&gt; TipsetRangeSyncerError&lt;C&gt; {
-    <span class="doccomment">/// Concatenate all validation error messages into one comma separated version.
+    <span class="doccomment">/// Concatenate all validation error messages into one comma separated
+    /// version.
     </span><span class="kw">fn </span>concat(errs: NonEmpty&lt;TipsetRangeSyncerError&lt;C&gt;&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>msg = errs
             .iter()
@@ -1939,12 +1936,14 @@
 }
 
 <span class="doccomment">/// The `TipsetProcessor` receives and prioritizes a stream of Tipsets
-/// for syncing from the `ChainMuxer` and the `SyncSubmitBlock` API before syncing.
-/// Each unique Tipset, by epoch and parents, is mapped into a Tipset range which will be synced into the Chain Store.
+/// for syncing from the `ChainMuxer` and the `SyncSubmitBlock` API before
+/// syncing. Each unique Tipset, by epoch and parents, is mapped into a Tipset
+/// range which will be synced into the Chain Store.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>TipsetProcessor&lt;DB, C: Consensus&gt; {
     state: TipsetProcessorState&lt;DB, C&gt;,
     tracker: <span class="kw">crate</span>::chain_muxer::WorkerState,
-    <span class="doccomment">/// Tipsets pushed into this stream _must_ be validated beforehand by the `TipsetValidator`
+    <span class="doccomment">/// Tipsets pushed into this stream _must_ be validated beforehand by the
+    /// `TipsetValidator`
     </span>tipsets: Pin&lt;Box&lt;<span class="kw">dyn </span>futures::Stream&lt;Item = Arc&lt;Tipset&gt;&gt; + Send&gt;&gt;,
     consensus: Arc&lt;C&gt;,
     state_manager: Arc&lt;StateManager&lt;DB&gt;&gt;,
@@ -1997,7 +1996,7 @@
         Box::pin(<span class="kw">async move </span>{
             <span class="comment">// Define the low end of the range
             // Unwrapping is safe here because the store always has at least one tipset
-            </span><span class="kw">let </span>current_head = chain_store.heaviest_tipset().<span class="kw">await</span>.unwrap();
+            </span><span class="kw">let </span>current_head = chain_store.heaviest_tipset();
             <span class="comment">// Unwrapping is safe here because we assume that the
             // tipset group contains at least one tipset
             </span><span class="kw">let </span>proposed_head = tipset_group.take_heaviest_tipset().unwrap();
@@ -2053,15 +2052,17 @@
         <span class="macro">trace!</span>(<span class="string">&quot;Polling TipsetProcessor&quot;</span>);
 
         <span class="comment">// TODO: Determine if polling the tipset stream before the state machine
-        //       introduces a DOS attack vector where peers send duplicate, valid tipsets over
-        //       GossipSub to divert resources away from syncing tipset ranges.
-        // First, gather the tipsets off of the channel. Reading off the receiver will return immediately.
-        // Ensure that the task will wake up when the stream has a new item by registering it for wakeup.
+        //       introduces a DOS attack vector where peers send duplicate, valid
+        // tipsets over       GossipSub to divert resources away from syncing
+        // tipset ranges. First, gather the tipsets off of the channel. Reading
+        // off the receiver will return immediately. Ensure that the task will
+        // wake up when the stream has a new item by registering it for wakeup.
         // As a tipset is received through the stream we assume:
         //   1. Tipset has at least 1 block
         //   2. Tipset epoch is not behind the current max epoch in the store
-        //   3. Tipset is heavier than the heaviest tipset in the store at the time when it was queued
-        //   4. Tipset message roots were calculated and integrity checks were run
+        //   3. Tipset is heavier than the heaviest tipset in the store at the time when
+        // it was queued   4. Tipset message roots were calculated and integrity
+        // checks were run
 
         // Read all of the tipsets available on the stream
         </span><span class="kw">let </span><span class="kw-2">mut </span>grouped_tipsets: HashMap&lt;(i64, TipsetKeys), TipsetGroup&gt; = HashMap::new();
@@ -2091,11 +2092,13 @@
 
         <span class="macro">trace!</span>(<span class="string">&quot;Tipsets received through stream: {}&quot;</span>, grouped_tipsets.len());
 
-        <span class="comment">// Consume the tipsets read off of the stream and attempt to update the state machine
+        <span class="comment">// Consume the tipsets read off of the stream and attempt to update the state
+        // machine
         </span><span class="kw">match </span><span class="self">self</span>.state {
             TipsetProcessorState::Idle =&gt; {
                 <span class="comment">// Set the state to FindRange if we have a tipset to sync towards
-                // Consume the tipsets received, start syncing the heaviest tipset group, and discard the rest
+                // Consume the tipsets received, start syncing the heaviest tipset group, and
+                // discard the rest
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(((epoch, parents), heaviest_tipset_group)) = grouped_tipsets
                     .into_iter()
                     .max_by(|(<span class="kw">_</span>, a), (<span class="kw">_</span>, b)| a.weight_cmp(b))
@@ -2145,7 +2148,8 @@
                                 <span class="comment">// Both tipsets groups have the same epoch &amp; parents, so merge them
                                 </span>ns.merge(heaviest_tipset_group);
                             } <span class="kw">else if </span>heaviest_tipset_group.is_heavier_than(ns) {
-                                <span class="comment">// The tipset group received is heavier than the one saved, replace it.
+                                <span class="comment">// The tipset group received is heavier than the one saved, replace
+                                // it.
                                 </span><span class="kw-2">*</span>next_sync = <span class="prelude-val">Some</span>(heaviest_tipset_group);
                             }
                             <span class="comment">// Otherwise, drop the heaviest tipset group
@@ -2192,7 +2196,8 @@
                                 <span class="comment">// Both tipsets groups have the same epoch &amp; parents, so merge them
                                 </span>ns.merge(heaviest_tipset_group);
                             } <span class="kw">else if </span>heaviest_tipset_group.is_heavier_than(ns) {
-                                <span class="comment">// The tipset group received is heavier than the one saved, replace it.
+                                <span class="comment">// The tipset group received is heavier than the one saved, replace
+                                // it.
                                 </span><span class="kw-2">*</span>next_sync = <span class="prelude-val">Some</span>(heaviest_tipset_group);
                             } <span class="kw">else </span>{
                                 <span class="comment">// Otherwise, drop the heaviest tipset group
@@ -2364,12 +2369,11 @@
             genesis.clone(),
         ));
 
-        <span class="kw">let </span><span class="kw-2">mut </span>tipsets_included = HashSet::new();
-        tipsets_included.insert(proposed_head.key());
+        <span class="kw">let </span>tipsets_included = HashSet::from_iter([proposed_head.key().clone()]);
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             proposed_head,
             current_head,
-            tipsets_included: HashSet::new(),
+            tipsets_included,
             tipset_tasks,
             consensus,
             state_manager,
@@ -2446,9 +2450,10 @@
     }
 }
 
-<span class="doccomment">/// Sync headers backwards from the proposed head to the current one, requesting missing tipsets from the network.
-/// Once headers are available, download messages going forward on the chain and validate each extension.
-/// Finally set the proposed head as the heaviest tipset.
+<span class="doccomment">/// Sync headers backwards from the proposed head to the current one, requesting
+/// missing tipsets from the network. Once headers are available, download
+/// messages going forward on the chain and validate each extension. Finally set
+/// the proposed head as the heaviest tipset.
 </span><span class="attr">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">fn </span>sync_tipset_range&lt;DB: Blockstore + Store + Clone + Sync + Send + <span class="lifetime">&#39;static</span>, C: Consensus&gt;(
     proposed_head: Arc&lt;Tipset&gt;,
@@ -2465,8 +2470,7 @@
     Box::pin(<span class="kw">async move </span>{
         tracker
             .write()
-            .<span class="kw">await
-            </span>.init(current_head.clone(), proposed_head.clone());
+            .init(current_head.clone(), proposed_head.clone());
 
         <span class="kw">let </span>parent_tipsets = <span class="kw">match </span>sync_headers_in_reverse(
             tracker.clone(),
@@ -2481,21 +2485,21 @@
         </span>{
             <span class="prelude-val">Ok</span>(parent_tipsets) =&gt; parent_tipsets,
             <span class="prelude-val">Err</span>(why) =&gt; {
-                tracker.write().<span class="kw">await</span>.error(why.to_string());
+                tracker.write().error(why.to_string());
                 <span class="kw">return </span><span class="prelude-val">Err</span>(why);
             }
         };
 
         <span class="comment">// Persist the blocks from the synced Tipsets into the store
-        </span>tracker.write().<span class="kw">await</span>.set_stage(SyncStage::Headers);
+        </span>tracker.write().set_stage(SyncStage::Headers);
         <span class="kw">let </span>headers: Vec&lt;<span class="kw-2">&amp;</span>BlockHeader&gt; = parent_tipsets.iter().flat_map(|t| t.blocks()).collect();
         <span class="kw">if let </span><span class="prelude-val">Err</span>(why) = persist_objects(chain_store.blockstore(), <span class="kw-2">&amp;</span>headers) {
-            tracker.write().<span class="kw">await</span>.error(why.to_string());
+            tracker.write().error(why.to_string());
             <span class="kw">return </span><span class="prelude-val">Err</span>(why.into());
         };
 
         <span class="comment">//  Sync and validate messages from the tipsets
-        </span>tracker.write().<span class="kw">await</span>.set_stage(SyncStage::Messages);
+        </span>tracker.write().set_stage(SyncStage::Messages);
         <span class="kw">if let </span><span class="prelude-val">Err</span>(why) = sync_messages_check_state(
             tracker.clone(),
             consensus,
@@ -2510,19 +2514,20 @@
         .<span class="kw">await
         </span>{
             <span class="macro">error!</span>(<span class="string">&quot;Sync messages check state failed for tipset range&quot;</span>);
-            tracker.write().<span class="kw">await</span>.error(why.to_string());
+            tracker.write().error(why.to_string());
             <span class="kw">return </span><span class="prelude-val">Err</span>(why);
         };
-        tracker.write().<span class="kw">await</span>.set_stage(SyncStage::Complete);
+        tracker.write().set_stage(SyncStage::Complete);
 
-        <span class="comment">// At this point the head is synced and it can be set in the store as the heaviest
+        <span class="comment">// At this point the head is synced and it can be set in the store as the
+        // heaviest
         </span><span class="macro">debug!</span>(
             <span class="string">&quot;Tipset range successfully verified: EPOCH = [{}, {}], HEAD_KEY = {:?}&quot;</span>,
             proposed_head.epoch(),
             current_head.epoch(),
             proposed_head.key()
         );
-        <span class="kw">if let </span><span class="prelude-val">Err</span>(why) = chain_store.put_tipset::&lt;C&gt;(<span class="kw-2">&amp;</span>proposed_head).<span class="kw">await </span>{
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(why) = chain_store.put_tipset::&lt;C&gt;(<span class="kw-2">&amp;</span>proposed_head) {
             <span class="macro">error!</span>(
                 <span class="string">&quot;Putting tipset range head [EPOCH = {}, KEYS = {:?}] in the store failed: {}&quot;</span>,
                 proposed_head.epoch(),
@@ -2535,9 +2540,9 @@
     })
 }
 
-<span class="doccomment">/// Download headers between the proposed head and the current one available locally.
-/// If they turn out to be on different forks, download more headers up to a certain limit
-/// to try to find a common ancestor.
+<span class="doccomment">/// Download headers between the proposed head and the current one available
+/// locally. If they turn out to be on different forks, download more headers up
+/// to a certain limit to try to find a common ancestor.
 </span><span class="kw">async fn </span>sync_headers_in_reverse&lt;
     DB: Blockstore + Store + Clone + Sync + Send + <span class="lifetime">&#39;static</span>,
     C: Consensus,
@@ -2553,7 +2558,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>parent_blocks: Vec&lt;Cid&gt; = <span class="macro">vec!</span>[];
     <span class="kw">let </span><span class="kw-2">mut </span>parent_tipsets = Vec::with_capacity(tipset_range_length <span class="kw">as </span>usize + <span class="number">1</span>);
     parent_tipsets.push(proposed_head.clone());
-    tracker.write().<span class="kw">await</span>.set_epoch(current_head.epoch());
+    tracker.write().set_epoch(current_head.epoch());
 
     <span class="kw">let </span>total_size = proposed_head.epoch() - current_head.epoch();
     <span class="kw">let </span>pb = ProgressBar::new(total_size <span class="kw">as </span>u64);
@@ -2566,8 +2571,7 @@
         </span><span class="kw">let </span>oldest_parent = parent_tipsets.last().unwrap();
         <span class="kw">let </span>work_to_be_done = oldest_parent.epoch() - current_head.epoch();
         pb.set((work_to_be_done - total_size).unsigned_abs());
-        validate_tipset_against_cache(bad_block_cache, oldest_parent.parents(), <span class="kw-2">&amp;</span>parent_blocks)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        validate_tipset_against_cache(bad_block_cache, oldest_parent.parents(), <span class="kw-2">&amp;</span>parent_blocks)<span class="question-mark">?</span>;
 
         <span class="comment">// Check if we are at the end of the range
         </span><span class="kw">if </span>oldest_parent.epoch() &lt;= current_head.epoch() {
@@ -2576,7 +2580,7 @@
             </span><span class="kw">break</span>;
         }
         <span class="comment">// Attempt to load the parent tipset from local store
-        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(tipset) = chain_store.tipset_from_keys(oldest_parent.parents()).<span class="kw">await </span>{
+        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(tipset) = chain_store.tipset_from_keys(oldest_parent.parents()) {
             parent_blocks.extend_from_slice(tipset.cids());
             parent_tipsets.push(tipset);
             <span class="kw">continue</span>;
@@ -2595,9 +2599,9 @@
             </span><span class="kw">if </span>tipset.epoch() &lt; current_head.epoch() {
                 <span class="kw">break </span><span class="lifetime">&#39;sync</span>;
             }
-            validate_tipset_against_cache(bad_block_cache, tipset.key(), <span class="kw-2">&amp;</span>parent_blocks).<span class="kw">await</span><span class="question-mark">?</span>;
+            validate_tipset_against_cache(bad_block_cache, tipset.key(), <span class="kw-2">&amp;</span>parent_blocks)<span class="question-mark">?</span>;
             parent_blocks.extend_from_slice(tipset.cids());
-            tracker.write().<span class="kw">await</span>.set_epoch(tipset.epoch());
+            tracker.write().set_epoch(tipset.epoch());
             parent_tipsets.push(tipset);
         }
     }
@@ -2616,8 +2620,7 @@
             .chain_exchange_headers(<span class="prelude-val">None</span>, oldest_tipset.parents(), FORK_LENGTH_THRESHOLD)
             .<span class="kw">await
             </span>.map_err(TipsetRangeSyncerError::NetworkTipsetQueryFailed)<span class="question-mark">?</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>potential_common_ancestor =
-            chain_store.tipset_from_keys(current_head.parents()).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>potential_common_ancestor = chain_store.tipset_from_keys(current_head.parents())<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>fork_length = <span class="number">1</span>;
         <span class="kw">while </span>i &lt; fork_tipsets.len() {
@@ -2643,17 +2646,17 @@
                 i += <span class="number">1</span>;
             } <span class="kw">else </span>{
                 fork_length += <span class="number">1</span>;
-                <span class="comment">// Increment the fork length and enfore the fork length check
+                <span class="comment">// Increment the fork length and enforce the fork length check
                 </span><span class="kw">if </span>fork_length &gt; FORK_LENGTH_THRESHOLD {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(TipsetRangeSyncerError::ChainForkLengthExceedsMaximum);
                 }
-                <span class="comment">// If we have not found a common ancestor by the last iteration, then return an error
+                <span class="comment">// If we have not found a common ancestor by the last iteration, then return an
+                // error
                 </span><span class="kw">if </span>i == (fork_tipsets.len() - <span class="number">1</span>) {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(TipsetRangeSyncerError::ChainForkLengthExceedsFinalityThreshold);
                 }
-                potential_common_ancestor = chain_store
-                    .tipset_from_keys(potential_common_ancestor.parents())
-                    .<span class="kw">await</span><span class="question-mark">?</span>;
+                potential_common_ancestor =
+                    chain_store.tipset_from_keys(potential_common_ancestor.parents())<span class="question-mark">?</span>;
             }
         }
     }
@@ -2694,9 +2697,10 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(e);
         }
 
-        <span class="comment">// Add the tipset to the store. The tipset will be expanded with other blocks with
-        // the same [epoch, parents] before updating the heaviest Tipset in the store.
-        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(why) = chain_store.put_tipset::&lt;C&gt;(<span class="kw-2">&amp;</span>proposed_head).<span class="kw">await </span>{
+        <span class="comment">// Add the tipset to the store. The tipset will be expanded with other blocks
+        // with the same [epoch, parents] before updating the heaviest Tipset in
+        // the store.
+        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(why) = chain_store.put_tipset::&lt;C&gt;(<span class="kw-2">&amp;</span>proposed_head) {
             <span class="macro">error!</span>(
                 <span class="string">&quot;Putting tipset [EPOCH = {}, KEYS = {:?}] in the store failed: {}&quot;</span>,
                 proposed_head.epoch(),
@@ -2753,8 +2757,9 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="doccomment">/// Going forward along the tipsets, try to load the messages in them from the `BlockStore`,
-/// or download them from the network, then validate the full tipset on each epoch.
+<span class="doccomment">/// Going forward along the tipsets, try to load the messages in them from the
+/// `BlockStore`, or download them from the network, then validate the full
+/// tipset on each epoch.
 </span><span class="attr">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">async fn </span>sync_messages_check_state&lt;
     DB: Blockstore + Store + Clone + Send + Sync + <span class="lifetime">&#39;static</span>,
@@ -2809,28 +2814,30 @@
     <span class="comment">// Validation loop
     </span><span class="kw">while let </span><span class="prelude-val">Ok</span>(full_tipset) = r.recv_async().<span class="kw">await </span>{
         <span class="kw">let </span>current_epoch = full_tipset.epoch();
-        <span class="kw">let </span>timer = metrics::TIPSET_PROCESSING_TIME.start_timer();
-        validate_tipset::&lt;<span class="kw">_</span>, C&gt;(
-            consensus.clone(),
-            state_manager.clone(),
-            <span class="kw-2">&amp;</span>chainstore,
-            bad_block_cache,
-            full_tipset,
-            genesis,
-            invalid_block_strategy,
-        )
-        .<span class="kw">await</span><span class="question-mark">?</span>;
-        timer.observe_duration();
-        tracker.write().<span class="kw">await</span>.set_epoch(current_epoch);
+        {
+            <span class="kw">let </span>_timer = metrics::TIPSET_PROCESSING_TIME.start_timer();
+            validate_tipset::&lt;<span class="kw">_</span>, C&gt;(
+                consensus.clone(),
+                state_manager.clone(),
+                <span class="kw-2">&amp;</span>chainstore,
+                bad_block_cache,
+                full_tipset,
+                genesis,
+                invalid_block_strategy,
+            )
+            .<span class="kw">await</span><span class="question-mark">?</span>;
+        }
+        tracker.write().set_epoch(current_epoch);
         metrics::LAST_VALIDATED_TIPSET_EPOCH.set(current_epoch <span class="kw">as </span>u64);
     }
 
     handle.<span class="kw">await</span><span class="question-mark">?
 </span>}
 
-<span class="doccomment">/// Validates full blocks in the tipset in parallel (since the messages are not executed),
-/// adding the successful ones to the tipset tracker, and the failed ones to the bad block cache,
-/// depending on strategy. Any bad block fails validation.
+<span class="doccomment">/// Validates full blocks in the tipset in parallel (since the messages are not
+/// executed), adding the successful ones to the tipset tracker, and the failed
+/// ones to the bad block cache, depending on strategy. Any bad block fails
+/// validation.
 </span><span class="kw">async fn </span>validate_tipset&lt;DB: Blockstore + Store + Clone + Send + Sync + <span class="lifetime">&#39;static</span>, C: Consensus&gt;(
     consensus: Arc&lt;C&gt;,
     state_manager: Arc&lt;StateManager&lt;DB&gt;&gt;,
@@ -2869,7 +2876,7 @@
     <span class="kw">while let </span><span class="prelude-val">Some</span>(result) = validations.next().<span class="kw">await </span>{
         <span class="kw">match </span>result<span class="question-mark">? </span>{
             <span class="prelude-val">Ok</span>(block) =&gt; {
-                chainstore.add_to_tipset_tracker(block.header()).<span class="kw">await</span>;
+                chainstore.add_to_tipset_tracker(block.header());
             }
             <span class="prelude-val">Err</span>((cid, why)) =&gt; {
                 <span class="macro">warn!</span>(
@@ -2885,7 +2892,7 @@
                         TipsetRangeSyncerError::TimeTravellingBlock(<span class="kw">_</span>, <span class="kw">_</span>)
                         | TipsetRangeSyncerError::TipsetParentNotFound(<span class="kw">_</span>) =&gt; (),
                         why =&gt; {
-                            bad_block_cache.put(cid, why.to_string()).<span class="kw">await</span>;
+                            bad_block_cache.put(cid, why.to_string());
                         }
                     }
                 }
@@ -2895,15 +2902,16 @@
     }
     <span class="comment">// Doing flush here creates small sst files at ~20KB
     // Then we need to manually compact them by calling CompactFiles
-    // which howver is not exposed by rocksdb or librocksdb-sys crates
+    // which however is not exposed by rocksdb or librocksdb-sys crates
     // if let Err(e) = chainstore.db.flush() {
     //     warn!(&quot;Failed to flush db: {e}&quot;);
     // }
     </span><span class="prelude-val">Ok</span>(())
 }
 
-<span class="doccomment">/// Validate the block according to the rules specific to the consensus being used,
-/// and the common rules that pertain to the assumptions of the `ChainSync` protocol.
+<span class="doccomment">/// Validate the block according to the rules specific to the consensus being
+/// used, and the common rules that pertain to the assumptions of the
+/// `ChainSync` protocol.
 ///
 /// Returns the validated block if `Ok`.
 /// Returns the block CID (for marking bad) and `Error` if invalid (`Err`).
@@ -2917,7 +2925,8 @@
 /// * NB: This is where the messages in the *parent* tipset are executed.
 ///
 /// Consensus specific validation should include:
-/// * Checking that the messages in the block correspond to the agreed upon total ordering
+/// * Checking that the messages in the block correspond to the agreed upon
+///   total ordering
 /// * That the block is a deterministic derivative of the underlying consensus
 </span><span class="kw">async fn </span>validate_block&lt;DB: Blockstore + Store + Clone + Sync + Send + <span class="lifetime">&#39;static</span>, C: Consensus&gt;(
     consensus: Arc&lt;C&gt;,
@@ -2951,8 +2960,7 @@
 
     <span class="kw">let </span>base_tipset = chain_store
         .tipset_from_keys(header.parents())
-        .<span class="kw">await
-        </span><span class="comment">// The parent tipset will always be there when calling validate_block
+        <span class="comment">// The parent tipset will always be there when calling validate_block
         // as part of the sync_tipset_range flow because all of the headers in the range
         // have been committed to the store. When validate_block is called from sync_tipset
         // this guarantee does not exist, so we create a specific error to inform the caller
@@ -2967,8 +2975,7 @@
     <span class="comment">// Retrieve lookback tipset for validation
     </span><span class="kw">let </span>lookback_state = state_manager
         .get_lookback_tipset_for_round(base_tipset.clone(), block.header().epoch())
-        .<span class="kw">await
-        </span>.map_err(|e| (<span class="kw-2">*</span>block_cid, e.into()))
+        .map_err(|e| (<span class="kw-2">*</span>block_cid, e.into()))
         .map(|(<span class="kw">_</span>, s)| Arc::new(s))<span class="question-mark">?</span>;
 
     <span class="comment">// Work address needed for async validations, so necessary
@@ -3001,7 +3008,7 @@
                 TipsetRangeSyncerError::&lt;C&gt;::Validation(<span class="macro">format!</span>(<span class="string">&quot;Could not compute base fee: {e}&quot;</span>))
             })<span class="question-mark">?</span>;
         <span class="kw">let </span>parent_base_fee = v_block.header.parent_base_fee();
-        <span class="kw">if </span><span class="kw-2">&amp;</span>base_fee != parent_base_fee {
+        <span class="kw">if </span>base_fee != parent_base_fee.clone() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(TipsetRangeSyncerError::&lt;C&gt;::Validation(<span class="macro">format!</span>(
                 <span class="string">&quot;base fee doesn&#39;t match: {parent_base_fee} (header), {base_fee} (computed)&quot;
             </span>)));
@@ -3042,15 +3049,6 @@
             })<span class="question-mark">?</span>;
 
         <span class="kw">if </span><span class="kw-2">&amp;</span>state_root != header.state_root() {
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = forest_statediff::print_state_diff(
-                v_state_manager.blockstore(),
-                <span class="kw-2">&amp;</span>state_root,
-                header.state_root(),
-                <span class="prelude-val">Some</span>(<span class="number">1</span>),
-            ) {
-                <span class="macro">eprintln!</span>(<span class="string">&quot;Failed to print state-diff: {err}&quot;</span>);
-            }
-
             <span class="kw">return </span><span class="prelude-val">Err</span>(TipsetRangeSyncerError::&lt;C&gt;::Validation(<span class="macro">format!</span>(
                 <span class="string">&quot;Parent state root did not match computed state: {} (header), {} (computed)&quot;</span>,
                 header.state_root(),
@@ -3083,7 +3081,7 @@
         consensus
             .validate_block(state_manager, v_block)
             .map_err(|errs| {
-                <span class="comment">// NOTE: Concatentating errors here means the wrapper type of error
+                <span class="comment">// NOTE: Concatenating errors here means the wrapper type of error
                 // never surfaces, yet we always pay the cost of the generic argument.
                 // But there&#39;s no reason `validate_block` couldn&#39;t return a list of all
                 // errors instead of a single one that has all the error messages,
@@ -3122,7 +3120,8 @@
 /// * account nonce values
 /// * the message root in the header
 ///
-/// NB: This loads/computes the state resulting from the execution of the parent tipset.
+/// NB: This loads/computes the state resulting from the execution of the parent
+/// tipset.
 </span><span class="kw">async fn </span>check_block_messages&lt;
     DB: Blockstore + Store + Clone + Send + Sync + <span class="lifetime">&#39;static</span>,
     C: Consensus,
@@ -3171,7 +3170,7 @@
         <span class="kw">return </span><span class="prelude-val">Err</span>(TipsetRangeSyncerError::BlockWithoutBlsAggregate);
     }
 
-    <span class="kw">let </span>price_list = price_list_by_network_version(network_version);
+    <span class="kw">let </span>price_list = price_list_by_network_version(network_version.into());
     <span class="kw">let </span><span class="kw-2">mut </span>sum_gas_limit = <span class="number">0</span>;
 
     <span class="comment">// Check messages for validity
@@ -3311,17 +3310,15 @@
 
 <span class="doccomment">/// Check if any CID in `tipset` is a known bad block.
 /// If so, add all their descendants to the bad block cache and return an error.
-</span><span class="kw">async fn </span>validate_tipset_against_cache&lt;C: Consensus&gt;(
+</span><span class="kw">fn </span>validate_tipset_against_cache&lt;C: Consensus&gt;(
     bad_block_cache: <span class="kw-2">&amp;</span>BadBlockCache,
     tipset: <span class="kw-2">&amp;</span>TipsetKeys,
     descendant_blocks: <span class="kw-2">&amp;</span>[Cid],
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TipsetRangeSyncerError&lt;C&gt;&gt; {
     <span class="kw">for </span>cid <span class="kw">in </span>tipset.cids() {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(reason) = bad_block_cache.get(cid).<span class="kw">await </span>{
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(reason) = bad_block_cache.get(cid) {
             <span class="kw">for </span>block_cid <span class="kw">in </span>descendant_blocks {
-                bad_block_cache
-                    .put(<span class="kw-2">*</span>block_cid, <span class="macro">format!</span>(<span class="string">&quot;chain contained {cid}&quot;</span>))
-                    .<span class="kw">await</span>;
+                bad_block_cache.put(<span class="kw-2">*</span>block_cid, <span class="macro">format!</span>(<span class="string">&quot;chain contained {cid}&quot;</span>));
             }
             <span class="kw">return </span><span class="prelude-val">Err</span>(TipsetRangeSyncerError::TipsetRangeWithBadBlock(
                 <span class="kw-2">*</span>cid, reason,
@@ -3340,7 +3337,6 @@
     <span class="kw">use </span>num_bigint::BigInt;
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span>std::convert::TryFrom;
 
     <span class="kw">pub fn </span>mock_block(id: u64, weight: u64, ticket_sequence: u64) -&gt; BlockHeader {
         <span class="kw">let </span>addr = Address::new_id(id);
@@ -3368,16 +3364,16 @@
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>test_heaviest_weight() {
-        <span class="comment">// ticket_sequence are choosen so that Ticket(b3) &lt; Ticket(b1)
+        <span class="comment">// ticket_sequence are chosen so that Ticket(b3) &lt; Ticket(b1)
 
         </span><span class="kw">let </span>b1 = mock_block(<span class="number">1234561</span>, <span class="number">10</span>, <span class="number">2</span>);
-        <span class="kw">let </span>ts1 = Tipset::new(<span class="macro">vec!</span>[b1]).unwrap();
+        <span class="kw">let </span>ts1 = Tipset::from(b1);
 
         <span class="kw">let </span>b2 = mock_block(<span class="number">1234563</span>, <span class="number">9</span>, <span class="number">1</span>);
-        <span class="kw">let </span>ts2 = Tipset::new(<span class="macro">vec!</span>[b2]).unwrap();
+        <span class="kw">let </span>ts2 = Tipset::from(b2);
 
         <span class="kw">let </span>b3 = mock_block(<span class="number">1234562</span>, <span class="number">10</span>, <span class="number">1</span>);
-        <span class="kw">let </span>ts3 = Tipset::new(<span class="macro">vec!</span>[b3]).unwrap();
+        <span class="kw">let </span>ts3 = Tipset::from(b3);
 
         <span class="kw">let </span><span class="kw-2">mut </span>tsg = TipsetGroup::new(Arc::new(ts1));
         <span class="macro">assert!</span>(tsg.try_add_tipset(Arc::new(ts2)).is_none());
@@ -3389,4 +3385,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_chain_sync" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_chain_sync" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

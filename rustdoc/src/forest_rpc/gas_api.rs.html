@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/rpc/src/gas_api.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gas_api.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_rpc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/rpc/src/gas_api.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gas_api.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_rpc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -257,53 +257,26 @@
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
 <a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
+</span><span class="attr">#![allow(clippy::unused_async)]
 
-</span><span class="kw">use </span>jsonrpc_v2::{Data, Error <span class="kw">as </span>JsonRpcError, Params};
-<span class="kw">use </span>num_traits::{FromPrimitive, Zero};
-<span class="kw">use </span>rand_distr::{Distribution, Normal};
-
-<span class="kw">use </span>forest_beacon::Beacon;
+</span><span class="kw">use </span>forest_beacon::Beacon;
 <span class="kw">use </span>forest_blocks::{tipset_keys_json::TipsetKeysJson, TipsetKeys};
 <span class="kw">use </span>forest_chain::{BASE_FEE_MAX_CHANGE_DENOM, BLOCK_GAS_TARGET, MINIMUM_BASE_FEE};
 <span class="kw">use </span>forest_db::Store;
-<span class="kw">use </span>forest_json::address::json::AddressJson;
-<span class="kw">use </span>forest_json::message::json::MessageJson;
+<span class="kw">use </span>forest_json::{address::json::AddressJson, message::json::MessageJson};
 <span class="kw">use </span>forest_message::ChainMessage;
 <span class="kw">use </span>forest_rpc_api::{
     data_types::{MessageSendSpec, RPCState},
     gas_api::<span class="kw-2">*</span>,
 };
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
-<span class="kw">use </span>fvm_shared::bigint::BigInt;
-<span class="kw">use </span>fvm_shared::econ::TokenAmount;
-<span class="kw">use </span>fvm_shared::message::Message;
-<span class="kw">use </span>fvm_shared::BLOCK_GAS_LIMIT;
+<span class="kw">use </span>fvm_shared::{econ::TokenAmount, message::Message, BLOCK_GAS_LIMIT};
+<span class="kw">use </span>jsonrpc_v2::{Data, Error <span class="kw">as </span>JsonRpcError, Params};
+<span class="kw">use </span>num::BigInt;
+<span class="kw">use </span>num_traits::{FromPrimitive, Zero};
+<span class="kw">use </span>rand_distr::{Distribution, Normal};
 
 <span class="kw">const </span>MIN_GAS_PREMIUM: f64 = <span class="number">100000.0</span>;
 
@@ -318,12 +291,10 @@
 {
     <span class="kw">let </span>(MessageJson(msg), max_queue_blks, TipsetKeysJson(tsk)) = params;
 
-    estimate_fee_cap::&lt;DB, B&gt;(<span class="kw-2">&amp;</span>data, msg, max_queue_blks, tsk)
-        .<span class="kw">await
-        </span>.map(|n| TokenAmount::to_string(<span class="kw-2">&amp;</span>n))
+    estimate_fee_cap::&lt;DB, B&gt;(<span class="kw-2">&amp;</span>data, msg, max_queue_blks, tsk).map(|n| TokenAmount::to_string(<span class="kw-2">&amp;</span>n))
 }
 
-<span class="kw">async fn </span>estimate_fee_cap&lt;DB, B&gt;(
+<span class="kw">fn </span>estimate_fee_cap&lt;DB, B&gt;(
     data: <span class="kw-2">&amp;</span>Data&lt;RPCState&lt;DB, B&gt;&gt;,
     msg: Message,
     max_queue_blks: i64,
@@ -333,12 +304,7 @@
     </span>DB: Blockstore + Store + Clone + Send + Sync + <span class="lifetime">&#39;static</span>,
     B: Beacon,
 {
-    <span class="kw">let </span>ts = data
-        .state_manager
-        .chain_store()
-        .heaviest_tipset()
-        .<span class="kw">await
-        </span>.ok_or(<span class="string">&quot;can&#39;t find heaviest tipset&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>ts = data.state_manager.chain_store().heaviest_tipset();
 
     <span class="kw">let </span>parent_base_fee = ts.blocks()[<span class="number">0</span>].parent_base_fee();
     <span class="kw">let </span>increase_factor =
@@ -347,9 +313,9 @@
     <span class="kw">let </span>fee_in_future = parent_base_fee
         * BigInt::from_f64(increase_factor * (<span class="number">1 </span>&lt;&lt; <span class="number">8</span>) <span class="kw">as </span>f64)
             .ok_or(<span class="string">&quot;failed to convert fee_in_future f64 to bigint&quot;</span>)<span class="question-mark">?</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>out = fee_in_future.div_floor(<span class="number">1 </span>&lt;&lt; <span class="number">8</span>);
-    out += msg.gas_premium;
-    <span class="prelude-val">Ok</span>(out)
+    <span class="kw">let </span><span class="kw-2">mut </span>out: forest_shim::econ::TokenAmount = fee_in_future.div_floor(<span class="number">1 </span>&lt;&lt; <span class="number">8</span>);
+    out += msg.gas_premium.into();
+    <span class="prelude-val">Ok</span>(out.into())
 }
 
 <span class="doccomment">/// Estimate the fee cap
@@ -387,12 +353,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>prices: Vec&lt;GasMeta&gt; = Vec::new();
     <span class="kw">let </span><span class="kw-2">mut </span>blocks = <span class="number">0</span>;
 
-    <span class="kw">let </span><span class="kw-2">mut </span>ts = data
-        .state_manager
-        .chain_store()
-        .heaviest_tipset()
-        .<span class="kw">await
-        </span>.ok_or(<span class="string">&quot;cant get heaviest tipset&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>ts = data.state_manager.chain_store().heaviest_tipset();
 
     <span class="kw">for _ in </span><span class="number">0</span>..(nblocksincl * <span class="number">2</span>) {
         <span class="kw">if </span>ts.epoch() == <span class="number">0 </span>{
@@ -401,8 +362,7 @@
         <span class="kw">let </span>pts = data
             .state_manager
             .chain_store()
-            .tipset_from_keys(ts.parents())
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+            .tipset_from_keys(ts.parents())<span class="question-mark">?</span>;
         blocks += pts.blocks().len();
         <span class="kw">let </span>msgs = forest_chain::messages_for_tipset(data.state_manager.blockstore(), <span class="kw-2">&amp;</span>pts)<span class="question-mark">?</span>;
 
@@ -486,37 +446,29 @@
     msg.gas_fee_cap = TokenAmount::from_atto(MINIMUM_BASE_FEE + <span class="number">1</span>);
     msg.gas_premium = TokenAmount::from_atto(<span class="number">1</span>);
 
-    <span class="kw">let </span>curr_ts = data
-        .state_manager
-        .chain_store()
-        .heaviest_tipset()
-        .<span class="kw">await
-        </span>.ok_or(<span class="string">&quot;cant find the current heaviest tipset&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>curr_ts = data.state_manager.chain_store().heaviest_tipset();
     <span class="kw">let </span>from_a = data
         .state_manager
         .resolve_to_key_addr(<span class="kw-2">&amp;</span>msg.from, <span class="kw-2">&amp;</span>curr_ts)
         .<span class="kw">await</span><span class="question-mark">?</span>;
 
-    <span class="kw">let </span>pending = data.mpool.pending_for(<span class="kw-2">&amp;</span>from_a).<span class="kw">await</span>;
+    <span class="kw">let </span>pending = data.mpool.pending_for(<span class="kw-2">&amp;</span>from_a);
     <span class="kw">let </span>prior_messages: Vec&lt;ChainMessage&gt; = pending
         .map(|s| s.into_iter().map(ChainMessage::Signed).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;())
         .unwrap_or_default();
 
+    <span class="kw">let </span>ts = data.mpool.cur_tipset.lock().clone();
     <span class="kw">let </span>res = data
         .state_manager
-        .call_with_gas(
-            <span class="kw-2">&amp;mut </span>ChainMessage::Unsigned(msg),
-            <span class="kw-2">&amp;</span>prior_messages,
-            <span class="prelude-val">Some</span>(data.mpool.cur_tipset.as_ref().read().<span class="kw">await</span>.clone()),
-        )
+        .call_with_gas(<span class="kw-2">&amp;mut </span>ChainMessage::Unsigned(msg), <span class="kw-2">&amp;</span>prior_messages, <span class="prelude-val">Some</span>(ts))
         .<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">match </span>res.msg_rct {
         <span class="prelude-val">Some</span>(rct) =&gt; {
             <span class="kw">if </span>rct.exit_code.value() != <span class="number">0 </span>{
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(-<span class="number">1</span>);
             }
-            <span class="comment">// TODO: Figure out why we always under estimate the gas calculation so we dont need to add 200000
-            // https://github.com/ChainSafe/forest/issues/901
+            <span class="comment">// TODO: Figure out why we always under estimate the gas calculation so we dont
+            // need to add 200000 https://github.com/ChainSafe/forest/issues/901
             </span><span class="prelude-val">Ok</span>(rct.gas_used + <span class="number">200000</span>)
         }
         <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(-<span class="number">1</span>),
@@ -558,11 +510,11 @@
         msg.gas_premium = gp;
     }
     <span class="kw">if </span>msg.gas_fee_cap.is_zero() {
-        <span class="kw">let </span>gfp = estimate_fee_cap(data, msg.clone(), <span class="number">20</span>, tsk).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>gfp = estimate_fee_cap(data, msg.clone(), <span class="number">20</span>, tsk)<span class="question-mark">?</span>;
         msg.gas_fee_cap = gfp;
     }
     <span class="comment">// TODO: Cap Gas Fee https://github.com/ChainSafe/forest/issues/901
     </span><span class="prelude-val">Ok</span>(msg)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_rpc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_rpc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

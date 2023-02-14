@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/state_manager/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_state_manager/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/state_manager/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_state_manager/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1217,7 +1217,34 @@
 <a href="#1217" id="1217">1217</a>
 <a href="#1218" id="1218">1218</a>
 <a href="#1219" id="1219">1219</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#1220" id="1220">1220</a>
+<a href="#1221" id="1221">1221</a>
+<a href="#1222" id="1222">1222</a>
+<a href="#1223" id="1223">1223</a>
+<a href="#1224" id="1224">1224</a>
+<a href="#1225" id="1225">1225</a>
+<a href="#1226" id="1226">1226</a>
+<a href="#1227" id="1227">1227</a>
+<a href="#1228" id="1228">1228</a>
+<a href="#1229" id="1229">1229</a>
+<a href="#1230" id="1230">1230</a>
+<a href="#1231" id="1231">1231</a>
+<a href="#1232" id="1232">1232</a>
+<a href="#1233" id="1233">1233</a>
+<a href="#1234" id="1234">1234</a>
+<a href="#1235" id="1235">1235</a>
+<a href="#1236" id="1236">1236</a>
+<a href="#1237" id="1237">1237</a>
+<a href="#1238" id="1238">1238</a>
+<a href="#1239" id="1239">1239</a>
+<a href="#1240" id="1240">1240</a>
+<a href="#1241" id="1241">1241</a>
+<a href="#1242" id="1242">1242</a>
+<a href="#1243" id="1243">1243</a>
+<a href="#1244" id="1244">1244</a>
+<a href="#1245" id="1245">1245</a>
+<a href="#1246" id="1246">1246</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
 </span><span class="kw">pub mod </span>chain_rand;
@@ -1226,8 +1253,12 @@
 <span class="kw">mod </span>utils;
 <span class="kw">mod </span>vm_circ_supply;
 
-<span class="kw">pub use </span><span class="self">self</span>::errors::<span class="kw-2">*</span>;
-<span class="kw">use </span>anyhow::Context;
+<span class="kw">use </span>std::{
+    num::NonZeroUsize,
+    sync::{Arc, Mutex <span class="kw">as </span>StdMutex},
+};
+
+<span class="kw">use </span>ahash::{HashMap, HashMapExt};
 <span class="kw">use </span>chain_rand::ChainRand;
 <span class="kw">use </span>cid::Cid;
 <span class="kw">use </span>fil_actors_runtime::runtime::Policy;
@@ -1241,37 +1272,151 @@
 <span class="kw">use </span>forest_legacy_ipld_amt::Amt;
 <span class="kw">use </span>forest_message::{ChainMessage, Message <span class="kw">as </span>MessageTrait};
 <span class="kw">use </span>forest_networks::{ChainConfig, Height};
+<span class="kw">use </span>forest_shim::{
+    state_tree::{ActorState, StateTree},
+    version::NetworkVersion,
+};
 <span class="kw">use </span>forest_utils::db::BlockstoreExt;
 <span class="kw">use </span>futures::{channel::oneshot, select, FutureExt};
-<span class="kw">use </span>fvm::executor::ApplyRet;
-<span class="kw">use </span>fvm::externs::Rand;
-<span class="kw">use </span>fvm::state_tree::{ActorState, StateTree};
+<span class="kw">use </span>fvm::{executor::ApplyRet, externs::Rand};
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
 <span class="kw">use </span>fvm_ipld_encoding::Cbor;
-<span class="kw">use </span>fvm_shared::address::{Address, Payload, Protocol, BLS_PUB_LEN};
-<span class="kw">use </span>fvm_shared::bigint::BigInt;
-<span class="kw">use </span>fvm_shared::clock::ChainEpoch;
-<span class="kw">use </span>fvm_shared::econ::TokenAmount;
-<span class="kw">use </span>fvm_shared::message::Message;
-<span class="kw">use </span>fvm_shared::receipt::Receipt;
-<span class="kw">use </span>fvm_shared::version::NetworkVersion;
+<span class="kw">use </span>fvm_shared::{
+    address::{Address, Payload, Protocol, BLS_PUB_LEN},
+    clock::ChainEpoch,
+    econ::TokenAmount,
+    message::Message,
+    receipt::Receipt,
+};
 <span class="kw">use </span>lru::LruCache;
+<span class="kw">use </span>num::BigInt;
 <span class="kw">use </span>num_traits::identities::Zero;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
-<span class="kw">use </span>std::collections::HashMap;
-<span class="kw">use </span>std::num::NonZeroUsize;
-<span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>tokio::runtime::Handle;
-<span class="kw">use </span>tokio::sync::broadcast::error::RecvError;
-<span class="kw">use </span>tokio::sync::RwLock;
+<span class="kw">use </span>tokio::sync::{broadcast::error::RecvError, Mutex <span class="kw">as </span>TokioMutex, RwLock};
 <span class="kw">use </span>tracing::{debug, error, info, instrument, trace, warn};
 <span class="kw">use </span>vm_circ_supply::GenesisInfo;
+
+<span class="kw">pub use </span><span class="self">self</span>::errors::<span class="kw-2">*</span>;
 
 <span class="kw">const </span>DEFAULT_TIPSET_CACHE_SIZE: NonZeroUsize =
     <span class="macro">forest_utils::const_option!</span>(NonZeroUsize::new(<span class="number">1024</span>));
 
 <span class="doccomment">/// Intermediary for retrieving state objects and updating actor states.
 </span><span class="kw">type </span>CidPair = (Cid, Cid);
+
+<span class="comment">// Various structures for implementing the tipset state cache
+
+</span><span class="kw">struct </span>TipsetStateCacheInner {
+    values: LruCache&lt;TipsetKeys, CidPair&gt;,
+    pending: Vec&lt;(TipsetKeys, Arc&lt;TokioMutex&lt;()&gt;&gt;)&gt;,
+}
+
+<span class="kw">impl </span>Default <span class="kw">for </span>TipsetStateCacheInner {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            values: LruCache::new(DEFAULT_TIPSET_CACHE_SIZE),
+            pending: Vec::with_capacity(<span class="number">8</span>),
+        }
+    }
+}
+
+<span class="kw">struct </span>TipsetStateCache {
+    cache: Arc&lt;StdMutex&lt;TipsetStateCacheInner&gt;&gt;,
+}
+
+<span class="kw">enum </span>Status {
+    Done(CidPair),
+    Empty(Arc&lt;TokioMutex&lt;()&gt;&gt;),
+}
+
+<span class="kw">impl </span>TipsetStateCache {
+    <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            cache: Arc::new(StdMutex::new(TipsetStateCacheInner::default())),
+        }
+    }
+
+    <span class="kw">fn </span>with_inner&lt;F, T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, func: F) -&gt; T
+    <span class="kw">where
+        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>TipsetStateCacheInner) -&gt; T,
+    {
+        <span class="kw">let </span><span class="kw-2">mut </span>lock = <span class="self">self</span>.cache.lock().unwrap();
+        func(<span class="kw-2">&amp;mut </span>lock)
+    }
+
+    <span class="kw">pub async fn </span>get_or_else&lt;F, Fut&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>TipsetKeys, compute: F) -&gt; anyhow::Result&lt;CidPair&gt;
+    <span class="kw">where
+        </span>F: Fn() -&gt; Fut,
+        Fut: core::future::Future&lt;Output = anyhow::Result&lt;CidPair&gt;&gt;,
+    {
+        <span class="kw">let </span>status = <span class="self">self</span>.with_inner(|inner| <span class="kw">match </span>inner.values.get(key) {
+            <span class="prelude-val">Some</span>(v) =&gt; Status::Done(<span class="kw-2">*</span>v),
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="kw">let </span>option = inner
+                    .pending
+                    .iter()
+                    .find(|(k, <span class="kw">_</span>)| k == key)
+                    .map(|(<span class="kw">_</span>, mutex)| mutex);
+                <span class="kw">match </span>option {
+                    <span class="prelude-val">Some</span>(mutex) =&gt; Status::Empty(mutex.clone()),
+                    <span class="prelude-val">None </span>=&gt; {
+                        <span class="kw">let </span>mutex = Arc::new(TokioMutex::new(()));
+                        inner.pending.push((key.clone(), mutex.clone()));
+                        Status::Empty(mutex)
+                    }
+                }
+            }
+        });
+        <span class="kw">match </span>status {
+            Status::Done(x) =&gt; {
+                forest_metrics::metrics::LRU_CACHE_HIT
+                    .with_label_values(<span class="kw-2">&amp;</span>[forest_metrics::metrics::values::STATE_MANAGER_TIPSET])
+                    .inc();
+                <span class="prelude-val">Ok</span>(x)
+            }
+            Status::Empty(mtx) =&gt; {
+                <span class="kw">let </span>_guard = mtx.lock().<span class="kw">await</span>;
+                <span class="kw">match </span><span class="self">self</span>.get(key) {
+                    <span class="prelude-val">Some</span>(v) =&gt; {
+                        <span class="comment">// While locking someone else computed the pending task
+                        </span>forest_metrics::metrics::LRU_CACHE_HIT
+                            .with_label_values(<span class="kw-2">&amp;</span>[
+                                forest_metrics::metrics::values::STATE_MANAGER_TIPSET,
+                            ])
+                            .inc();
+
+                        <span class="prelude-val">Ok</span>(v)
+                    }
+                    <span class="prelude-val">None </span>=&gt; {
+                        <span class="comment">// Entry does not have state computed yet, compute value and fill the cache
+                        </span>forest_metrics::metrics::LRU_CACHE_MISS
+                            .with_label_values(<span class="kw-2">&amp;</span>[
+                                forest_metrics::metrics::values::STATE_MANAGER_TIPSET,
+                            ])
+                            .inc();
+
+                        <span class="kw">let </span>cid_pair = compute().<span class="kw">await</span><span class="question-mark">?</span>;
+
+                        <span class="comment">// Write back to cache, release lock and return value
+                        </span><span class="self">self</span>.insert(key.clone(), cid_pair);
+                        <span class="prelude-val">Ok</span>(cid_pair)
+                    }
+                }
+            }
+        }
+    }
+
+    <span class="kw">fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>TipsetKeys) -&gt; <span class="prelude-ty">Option</span>&lt;CidPair&gt; {
+        <span class="self">self</span>.with_inner(|inner| inner.values.get(key).copied())
+    }
+
+    <span class="kw">fn </span>insert(<span class="kw-2">&amp;</span><span class="self">self</span>, key: TipsetKeys, value: CidPair) {
+        <span class="self">self</span>.with_inner(|inner| {
+            inner.pending.retain(|(k, <span class="kw">_</span>)| k != <span class="kw-2">&amp;</span>key);
+            inner.values.put(key, value);
+        });
+    }
+}
 
 <span class="doccomment">/// Type to represent invocation of state call results.
 </span><span class="attr">#[derive(Serialize, Deserialize)]
@@ -1295,17 +1440,16 @@
     locked: TokenAmount,
 }
 
-<span class="doccomment">/// State manager handles all interactions with the internal Filecoin actors state.
-/// This encapsulates the [`ChainStore`] functionality, which only handles chain data, to
-/// allow for interactions with the underlying state of the chain. The state manager not only
-/// allows interfacing with state, but also is used when performing state transitions.
+<span class="doccomment">/// State manager handles all interactions with the internal Filecoin actors
+/// state. This encapsulates the [`ChainStore`] functionality, which only
+/// handles chain data, to allow for interactions with the underlying state of
+/// the chain. The state manager not only allows interfacing with state, but
+/// also is used when performing state transitions.
 </span><span class="kw">pub struct </span>StateManager&lt;DB&gt; {
     cs: Arc&lt;ChainStore&lt;DB&gt;&gt;,
 
     <span class="doccomment">/// This is a cache which indexes tipsets to their calculated state.
-    /// The calculated state is wrapped in a mutex to avoid duplicate computation
-    /// of the state/receipt root.
-    </span>cache: RwLock&lt;LruCache&lt;TipsetKeys, Arc&lt;once_cell::sync::OnceCell&lt;CidPair&gt;&gt;&gt;&gt;,
+    </span>cache: TipsetStateCache,
     genesis_info: GenesisInfo,
     beacon: Arc&lt;forest_beacon::BeaconSchedule&lt;DrandBeacon&gt;&gt;,
     chain_config: Arc&lt;ChainConfig&gt;,
@@ -1317,21 +1461,17 @@
 <span class="kw">where
     </span>DB: Blockstore + Store + Clone + Send + Sync + <span class="lifetime">&#39;static</span>,
 {
-    <span class="kw">pub async fn </span>new(
+    <span class="kw">pub fn </span>new(
         cs: Arc&lt;ChainStore&lt;DB&gt;&gt;,
         chain_config: Arc&lt;ChainConfig&gt;,
         reward_calc: Arc&lt;<span class="kw">dyn </span>RewardCalc&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, anyhow::Error&gt; {
-        <span class="kw">let </span>genesis = cs.genesis()<span class="question-mark">?</span>.context(<span class="string">&quot;genesis header missing&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let </span>beacon = Arc::new(
-            chain_config
-                .get_beacon_schedule(genesis.timestamp())
-                .<span class="kw">await</span><span class="question-mark">?</span>,
-        );
+        <span class="kw">let </span>genesis = cs.genesis()<span class="question-mark">?</span>;
+        <span class="kw">let </span>beacon = Arc::new(chain_config.get_beacon_schedule(genesis.timestamp())<span class="question-mark">?</span>);
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             cs,
-            cache: RwLock::new(LruCache::new(DEFAULT_TIPSET_CACHE_SIZE)),
+            cache: TipsetStateCache::new(),
             genesis_info: GenesisInfo::from_chain_config(<span class="kw-2">&amp;</span>chain_config),
             beacon,
             chain_config,
@@ -1354,9 +1494,9 @@
     }
 
     <span class="doccomment">/// Gets actor from given [`Cid`], if it exists.
-    </span><span class="kw">pub fn </span>get_actor(<span class="kw-2">&amp;</span><span class="self">self</span>, addr: <span class="kw-2">&amp;</span>Address, state_cid: Cid) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;ActorState&gt;, Error&gt; {
+    </span><span class="kw">pub fn </span>get_actor(<span class="kw-2">&amp;</span><span class="self">self</span>, addr: <span class="kw-2">&amp;</span>Address, state_cid: Cid) -&gt; anyhow::Result&lt;<span class="prelude-ty">Option</span>&lt;ActorState&gt;&gt; {
         <span class="kw">let </span>state = StateTree::new_from_root(<span class="self">self</span>.blockstore().clone(), <span class="kw-2">&amp;</span>state_cid)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(state.get_actor(addr)<span class="question-mark">?</span>)
+        <span class="prelude-val">Ok</span>(state.get_actor(addr)<span class="question-mark">?</span>.map(|v| v.into()))
     }
 
     <span class="doccomment">/// Returns a reference to the state manager&#39;s [`Blockstore`].
@@ -1369,7 +1509,8 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.cs
     }
 
-    <span class="comment">// This function used to do this: Returns the network name from the init actor state.
+    <span class="comment">// This function used to do this: Returns the network name from the init actor
+    // state.
     </span><span class="doccomment">/// Returns the internal, protocol-level network name.
     </span><span class="kw">pub fn </span>get_network_name(<span class="kw-2">&amp;</span><span class="self">self</span>, _st: <span class="kw-2">&amp;</span>Cid) -&gt; <span class="prelude-ty">Result</span>&lt;String, Error&gt; {
         <span class="kw">if </span><span class="self">self</span>.chain_config.name == <span class="string">&quot;calibnet&quot; </span>{
@@ -1384,8 +1525,9 @@
         <span class="prelude-val">Err</span>(Error::Other(<span class="string">&quot;Cannot guess network name&quot;</span>.to_owned()))
         <span class="comment">// let init_act = self
         //     .get_actor(actor::init::ADDRESS, *st)?
-        //     .ok_or_else(|| Error::State(&quot;Init actor address could not be resolved&quot;.to_string()))?;
-        // let state = init::State::load(self.blockstore(), &amp;init_act)?;
+        //     .ok_or_else(|| Error::State(&quot;Init actor address could not be
+        // resolved&quot;.to_string()))?; let state =
+        // init::State::load(self.blockstore(), &amp;init_act)?;
         // Ok(state.into_network_name())
     </span>}
 
@@ -1406,13 +1548,15 @@
         state_cid: Cid,
         addr: <span class="kw-2">&amp;</span>Address,
     ) -&gt; anyhow::Result&lt;Address, Error&gt; {
-        <span class="kw">let </span>state = StateTree::new_from_root(<span class="self">self</span>.blockstore(), <span class="kw-2">&amp;</span>state_cid)<span class="question-mark">?</span>;
+        <span class="kw">let </span>state = StateTree::new_from_root(<span class="self">self</span>.blockstore(), <span class="kw-2">&amp;</span>state_cid)
+            .map_err(|e| Error::Other(e.to_string()))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>act = state
-            .get_actor(addr)<span class="question-mark">?
+            .get_actor(addr)
+            .map_err(|e| Error::State(e.to_string()))<span class="question-mark">?
             </span>.ok_or_else(|| Error::State(<span class="string">&quot;Miner actor not found&quot;</span>.to_string()))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>ms = miner::State::load(<span class="self">self</span>.blockstore(), <span class="kw-2">&amp;</span>act)<span class="question-mark">?</span>;
+        <span class="kw">let </span>ms = miner::State::load(<span class="self">self</span>.blockstore(), <span class="kw-2">&amp;</span>act.into())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>info = ms.info(<span class="self">self</span>.blockstore()).map_err(|e| e.to_string())<span class="question-mark">?</span>;
 
@@ -1420,7 +1564,8 @@
         <span class="prelude-val">Ok</span>(addr)
     }
 
-    <span class="doccomment">/// Returns specified actor&#39;s claimed power and total network power as a tuple.
+    <span class="doccomment">/// Returns specified actor&#39;s claimed power and total network power as a
+    /// tuple.
     </span><span class="kw">pub fn </span>get_power(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         state_cid: <span class="kw-2">&amp;</span>Cid,
@@ -1452,8 +1597,9 @@
         <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
     }
 
-    <span class="doccomment">/// Performs the state transition for the tipset and applies all unique messages in all blocks.
-    /// This function returns the state root and receipt root of the transition.
+    <span class="doccomment">/// Performs the state transition for the tipset and applies all unique
+    /// messages in all blocks. This function returns the state root and
+    /// receipt root of the transition.
     </span><span class="attr">#[allow(clippy::too_many_arguments)]
     </span><span class="kw">pub fn </span>apply_blocks&lt;R, CB&gt;(
         <span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;,
@@ -1485,11 +1631,7 @@
                 <span class="self">self</span>.genesis_info
                     .get_circulating_supply(epoch, <span class="kw-2">&amp;</span>db, <span class="kw-2">&amp;</span>state_root)<span class="question-mark">?</span>,
                 <span class="self">self</span>.reward_calc.clone(),
-                chain_epoch_root(
-                    Arc::clone(<span class="self">self</span>),
-                    Arc::clone(tipset),
-                    tokio::runtime::Handle::current(),
-                ),
+                chain_epoch_root(Arc::clone(<span class="self">self</span>), Arc::clone(tipset)),
                 <span class="kw-2">&amp;</span><span class="self">self</span>.engine,
                 Arc::clone(<span class="self">self</span>.chain_config()),
             )
@@ -1527,70 +1669,37 @@
         <span class="prelude-val">Ok</span>((state_root, receipt_root))
     }
 
-    <span class="doccomment">/// Returns the pair of (parent state root, message receipt root). This will either be cached
-    /// or will be calculated and fill the cache. Tipset state for a given tipset is guaranteed
-    /// not to be computed twice.
+    <span class="doccomment">/// Returns the pair of (parent state root, message receipt root). This will
+    /// either be cached or will be calculated and fill the cache. Tipset
+    /// state for a given tipset is guaranteed not to be computed twice.
     </span><span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">pub async fn </span>tipset_state(<span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;, tipset: <span class="kw-2">&amp;</span>Arc&lt;Tipset&gt;) -&gt; anyhow::Result&lt;CidPair&gt; {
-        <span class="comment">// Get entry in cache, if it exists.
-        // Arc is cloned here to avoid holding the entire cache lock until function ends.
-        // (tasks should be able to compute different tipset state&#39;s in parallel)
-        //
-        // In the case of task `A` computing the same tipset as task `B`, `A` will hold the
-        // mutex until the value is updated, which task `B` will await.
-        //
-        // If two tasks are computing different tipset states, they will only block computation
-        // when accessing/initializing the entry in cache, not during the whole tipset calc.
+        <span class="kw">let </span>key = tipset.key();
+        <span class="self">self</span>.cache
+            .get_or_else(key, || <span class="kw">async move </span>{
+                <span class="kw">let </span>cid_pair = <span class="kw">if </span>tipset.epoch() == <span class="number">0 </span>{
+                    <span class="comment">// NB: This is here because the process that executes blocks requires that the
+                    // block miner reference a valid miner in the state tree. Unless we create some
+                    // magical genesis miner, this won&#39;t work properly, so we short circuit here
+                    // This avoids the question of &#39;who gets paid the genesis block reward&#39;
+                    </span><span class="kw">let </span>message_receipts = tipset.blocks().first().ok_or_else(|| {
+                        Error::Other(<span class="string">&quot;Could not get message receipts&quot;</span>.to_string())
+                    })<span class="question-mark">?</span>;
 
-        // first try reading cache
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(entry) = <span class="self">self</span>.cache.write().<span class="kw">await</span>.get(tipset.key()) {
-            <span class="macro">trace!</span>(<span class="string">&quot;hit cache for tipset {:?}&quot;</span>, tipset.cids());
-            forest_metrics::metrics::LRU_CACHE_HIT
-                .with_label_values(<span class="kw-2">&amp;</span>[forest_metrics::metrics::values::STATE_MANAGER_TIPSET])
-                .inc();
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="kw-2">*</span>entry.wait());
-        }
+                    (<span class="kw-2">*</span>tipset.parent_state(), <span class="kw-2">*</span>message_receipts.message_receipts())
+                } <span class="kw">else </span>{
+                    <span class="comment">// generic constants are not implemented yet this is a lowcost method for now
+                    </span><span class="kw">let </span>no_func =
+                        <span class="prelude-val">None</span>::&lt;<span class="kw">fn</span>(<span class="kw-2">&amp;</span>Cid, <span class="kw-2">&amp;</span>ChainMessage, <span class="kw-2">&amp;</span>ApplyRet) -&gt; <span class="prelude-ty">Result</span>&lt;(), anyhow::Error&gt;&gt;;
+                    <span class="kw">let </span>ts_state = <span class="self">self</span>.compute_tipset_state(tipset, no_func).<span class="kw">await</span><span class="question-mark">?</span>;
+                    <span class="macro">debug!</span>(<span class="string">&quot;Completed tipset state calculation {:?}&quot;</span>, tipset.cids());
+                    ts_state
+                };
 
-        <span class="comment">// write an empty `OnceCell` when cache not hit
-        </span><span class="kw">let </span>cache_entry = Arc::new(once_cell::sync::OnceCell::new());
-        {
-            <span class="self">self</span>.cache
-                .write()
-                .<span class="kw">await
-                </span>.push(tipset.key().clone(), cache_entry.clone());
-        }
-
-        <span class="comment">// Entry does not have state computed yet, this task will fill entry if successful.
-        </span><span class="macro">debug!</span>(<span class="string">&quot;calculating tipset state {:?}&quot;</span>, tipset.cids());
-
-        <span class="kw">let </span>cid_pair = <span class="kw">if </span>tipset.epoch() == <span class="number">0 </span>{
-            <span class="comment">// NB: This is here because the process that executes blocks requires that the
-            // block miner reference a valid miner in the state tree. Unless we create some
-            // magical genesis miner, this won&#39;t work properly, so we short circuit here
-            // This avoids the question of &#39;who gets paid the genesis block reward&#39;
-            </span><span class="kw">let </span>message_receipts = tipset
-                .blocks()
-                .first()
-                .ok_or_else(|| Error::Other(<span class="string">&quot;Could not get message receipts&quot;</span>.to_string()))<span class="question-mark">?</span>;
-
-            (<span class="kw-2">*</span>tipset.parent_state(), <span class="kw-2">*</span>message_receipts.message_receipts())
-        } <span class="kw">else </span>{
-            <span class="comment">// generic constants are not implemented yet this is a lowcost method for now
-            </span><span class="kw">let </span>no_func = <span class="prelude-val">None</span>::&lt;<span class="kw">fn</span>(<span class="kw-2">&amp;</span>Cid, <span class="kw-2">&amp;</span>ChainMessage, <span class="kw-2">&amp;</span>ApplyRet) -&gt; <span class="prelude-ty">Result</span>&lt;(), anyhow::Error&gt;&gt;;
-            <span class="kw">let </span>ts_state = <span class="self">self</span>.compute_tipset_state(tipset, no_func).<span class="kw">await</span><span class="question-mark">?</span>;
-            <span class="macro">debug!</span>(<span class="string">&quot;completed tipset state calculation {:?}&quot;</span>, tipset.cids());
-            ts_state
-        };
-
-        <span class="comment">// Fill entry with calculated cid pair
-        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = cache_entry.set(cid_pair) {
-            <span class="macro">error!</span>(<span class="string">&quot;Fail to set tipset_state cache: {}, {}&quot;</span>, e.<span class="number">0</span>, e.<span class="number">1</span>);
-        }
-        forest_metrics::metrics::LRU_CACHE_MISS
-            .with_label_values(<span class="kw-2">&amp;</span>[forest_metrics::metrics::values::STATE_MANAGER_TIPSET])
-            .inc();
-        <span class="prelude-val">Ok</span>(cid_pair)
-    }
+                <span class="prelude-val">Ok</span>(cid_pair)
+            })
+            .<span class="kw">await
+    </span>}
 
     <span class="attr">#[instrument(skip(<span class="self">self</span>, rand))]
     </span><span class="kw">fn </span>call_raw(
@@ -1611,11 +1720,7 @@
             <span class="self">self</span>.genesis_info
                 .get_circulating_supply(bheight, <span class="self">self</span>.blockstore(), bstate)<span class="question-mark">?</span>,
             <span class="self">self</span>.reward_calc.clone(),
-            chain_epoch_root(
-                Arc::clone(<span class="self">self</span>),
-                Arc::clone(tipset),
-                tokio::runtime::Handle::current(),
-            ),
+            chain_epoch_root(Arc::clone(<span class="self">self</span>), Arc::clone(tipset)),
             <span class="kw-2">&amp;</span><span class="self">self</span>.engine,
             Arc::clone(<span class="self">self</span>.chain_config()),
         )<span class="question-mark">?</span>;
@@ -1646,60 +1751,47 @@
         })
     }
 
-    <span class="doccomment">/// runs the given message and returns its result without any persisted changes.
-    </span><span class="kw">pub async fn </span>call(
+    <span class="doccomment">/// runs the given message and returns its result without any persisted
+    /// changes.
+    </span><span class="kw">pub fn </span>call(
         <span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;,
         message: <span class="kw-2">&amp;mut </span>Message,
         tipset: <span class="prelude-ty">Option</span>&lt;Arc&lt;Tipset&gt;&gt;,
     ) -&gt; StateCallResult {
-        <span class="kw">let </span>ts = <span class="kw">if let </span><span class="prelude-val">Some</span>(t_set) = tipset {
-            t_set
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.cs
-                .heaviest_tipset()
-                .<span class="kw">await
-                </span>.ok_or_else(|| Error::Other(<span class="string">&quot;No heaviest tipset&quot;</span>.to_string()))<span class="question-mark">?
-        </span>};
-        <span class="kw">let </span>chain_rand = <span class="self">self</span>.chain_rand(ts.key().to_owned(), tokio::runtime::Handle::current());
+        <span class="kw">let </span>ts = tipset.unwrap_or_else(|| <span class="self">self</span>.cs.heaviest_tipset());
+        <span class="kw">let </span>chain_rand = <span class="self">self</span>.chain_rand(ts.key().to_owned());
         <span class="self">self</span>.call_raw(message, chain_rand, <span class="kw-2">&amp;</span>ts)
     }
 
-    <span class="doccomment">/// Computes message on the given [Tipset] state, after applying other messages and returns
-    /// the values computed in the VM.
+    <span class="doccomment">/// Computes message on the given [Tipset] state, after applying other
+    /// messages and returns the values computed in the VM.
     </span><span class="kw">pub async fn </span>call_with_gas(
         <span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;,
         message: <span class="kw-2">&amp;mut </span>ChainMessage,
         prior_messages: <span class="kw-2">&amp;</span>[ChainMessage],
         tipset: <span class="prelude-ty">Option</span>&lt;Arc&lt;Tipset&gt;&gt;,
     ) -&gt; StateCallResult {
-        <span class="kw">let </span>ts = <span class="kw">if let </span><span class="prelude-val">Some</span>(t_set) = tipset {
-            t_set
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.cs
-                .heaviest_tipset()
-                .<span class="kw">await
-                </span>.ok_or_else(|| Error::Other(<span class="string">&quot;No heaviest tipset&quot;</span>.to_string()))<span class="question-mark">?
-        </span>};
+        <span class="kw">let </span>ts = tipset.unwrap_or_else(|| <span class="self">self</span>.cs.heaviest_tipset());
         <span class="kw">let </span>(st, <span class="kw">_</span>) = <span class="self">self
             </span>.tipset_state(<span class="kw-2">&amp;</span>ts)
             .<span class="kw">await
             </span>.map_err(|<span class="kw">_</span>| Error::Other(<span class="string">&quot;Could not load tipset state&quot;</span>.to_string()))<span class="question-mark">?</span>;
-        <span class="kw">let </span>chain_rand = <span class="self">self</span>.chain_rand(ts.key().to_owned(), tokio::runtime::Handle::current());
+        <span class="kw">let </span>chain_rand = <span class="self">self</span>.chain_rand(ts.key().to_owned());
 
         <span class="kw">let </span>store = <span class="self">self</span>.blockstore().clone();
-        <span class="comment">// Since we&#39;re simulating a future message, pretend we&#39;re applying it in the &quot;next&quot; tipset
+        <span class="comment">// Since we&#39;re simulating a future message, pretend we&#39;re applying it in the
+        // &quot;next&quot; tipset
         </span><span class="kw">let </span>epoch = ts.epoch() + <span class="number">1</span>;
-        <span class="kw">let </span>async_handle = tokio::runtime::Handle::current();
         <span class="kw">let </span><span class="kw-2">mut </span>vm = VM::new(
             st,
             store,
             epoch,
             chain_rand,
-            ts.blocks()[<span class="number">0</span>].parent_base_fee().clone(),
+            ts.blocks()[<span class="number">0</span>].parent_base_fee().clone().into(),
             <span class="self">self</span>.genesis_info
                 .get_circulating_supply(epoch, <span class="self">self</span>.blockstore(), <span class="kw-2">&amp;</span>st)<span class="question-mark">?</span>,
             <span class="self">self</span>.reward_calc.clone(),
-            chain_epoch_root(Arc::clone(<span class="self">self</span>), Arc::clone(<span class="kw-2">&amp;</span>ts), async_handle),
+            chain_epoch_root(Arc::clone(<span class="self">self</span>), Arc::clone(<span class="kw-2">&amp;</span>ts)),
             <span class="kw-2">&amp;</span><span class="self">self</span>.engine,
             Arc::clone(<span class="self">self</span>.chain_config()),
         )<span class="question-mark">?</span>;
@@ -1722,8 +1814,8 @@
         })
     }
 
-    <span class="doccomment">/// Replays the given message and returns the result of executing the indicated message,
-    /// assuming it was executed in the indicated tipset.
+    <span class="doccomment">/// Replays the given message and returns the result of executing the
+    /// indicated message, assuming it was executed in the indicated tipset.
     </span><span class="kw">pub async fn </span>replay(
         <span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;,
         ts: <span class="kw-2">&amp;</span>Arc&lt;Tipset&gt;,
@@ -1731,8 +1823,9 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(Message, ApplyRet), Error&gt; {
         <span class="kw">const </span>ERROR_MSG: <span class="kw-2">&amp;</span>str = <span class="string">&quot;replay_halt&quot;</span>;
 
-        <span class="comment">// This isn&#39;t ideal to have, since the execution is syncronous, but this needs to be the
-        // case because the state transition has to be in blocking thread to avoid starving executor
+        <span class="comment">// This isn&#39;t ideal to have, since the execution is synchronous, but this needs
+        // to be the case because the state transition has to be in blocking
+        // thread to avoid starving executor
         </span><span class="kw">let </span>(m_tx, m_rx) = std::sync::mpsc::channel();
         <span class="kw">let </span>(r_tx, r_rx) = std::sync::mpsc::channel();
         <span class="kw">let </span>callback = <span class="kw">move </span>|cid: <span class="kw-2">&amp;</span>Cid, unsigned: <span class="kw-2">&amp;</span>ChainMessage, apply_ret: <span class="kw-2">&amp;</span>ApplyRet| {
@@ -1753,7 +1846,7 @@
             }
         }
 
-        <span class="comment">// Use try_recv here assuming callback execution is syncronous
+        <span class="comment">// Use try_recv here assuming callback execution is synchronous
         </span><span class="kw">let </span>out_mes = m_rx
             .try_recv()
             .map_err(|err| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;given message not found in tipset: {err}&quot;</span>)))<span class="question-mark">?</span>;
@@ -1764,7 +1857,12 @@
     }
 
     <span class="doccomment">/// Gets look-back tipset for block validations.
-    </span><span class="kw">pub async fn </span>get_lookback_tipset_for_round(
+    ///
+    /// The look-back tipset for a round is the tipset with epoch `round -
+    /// chain_finality`. Chain finality is usually 900. The given is a
+    /// reference point in the blockchain such that the look-back tipset can
+    /// be found by tracing the `parent` pointers.
+    </span><span class="kw">pub fn </span>get_lookback_tipset_for_round(
         <span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;,
         tipset: Arc&lt;Tipset&gt;,
         round: ChainEpoch,
@@ -1779,18 +1877,16 @@
 
         <span class="comment">// More null blocks than lookback
         </span><span class="kw">if </span>lbr &gt;= tipset.epoch() {
-            <span class="kw">let </span>(st, <span class="kw">_</span>) = <span class="self">self
-                </span>.tipset_state(<span class="kw-2">&amp;</span>tipset)
-                .<span class="kw">await
-                </span>.map_err(|e| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;Could execute tipset_state {e:?}&quot;</span>)))<span class="question-mark">?</span>;
-            <span class="kw">return </span><span class="prelude-val">Ok</span>((tipset, st));
+            <span class="comment">// This is not allowed to happen after network V3.
+            </span><span class="kw">return </span><span class="prelude-val">Err</span>(Error::Other(
+                <span class="string">&quot;Failed to find look-back tipset: Unexpected number of null blocks.&quot;</span>.to_string(),
+            ));
         }
 
         <span class="kw">let </span>next_ts = <span class="self">self
             </span>.cs
             .tipset_by_height(lbr + <span class="number">1</span>, tipset.clone(), <span class="bool-val">false</span>)
-            .<span class="kw">await
-            </span>.map_err(|e| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;Could not get tipset by height {e:?}&quot;</span>)))<span class="question-mark">?</span>;
+            .map_err(|e| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;Could not get tipset by height {e:?}&quot;</span>)))<span class="question-mark">?</span>;
         <span class="kw">if </span>lbr &gt; next_ts.epoch() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Other(<span class="macro">format!</span>(
                 <span class="string">&quot;failed to find non-null tipset {:?} {} which is known to exist, found {:?} {}&quot;</span>,
@@ -1803,13 +1899,12 @@
         <span class="kw">let </span>lbts = <span class="self">self
             </span>.cs
             .tipset_from_keys(next_ts.parents())
-            .<span class="kw">await
-            </span>.map_err(|e| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;Could not get tipset from keys {e:?}&quot;</span>)))<span class="question-mark">?</span>;
+            .map_err(|e| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;Could not get tipset from keys {e:?}&quot;</span>)))<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>((lbts, <span class="kw-2">*</span>next_ts.parent_state()))
     }
 
-    <span class="doccomment">/// Checks the eligibility of the miner. This is used in the validation that a block&#39;s miner
-    /// has the requirements to mine a block.
+    <span class="doccomment">/// Checks the eligibility of the miner. This is used in the validation that
+    /// a block&#39;s miner has the requirements to mine a block.
     </span><span class="kw">pub fn </span>eligible_to_mine(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         address: <span class="kw-2">&amp;</span>Address,
@@ -1864,7 +1959,8 @@
         <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>)
     }
 
-    <span class="doccomment">/// Performs a state transition, and returns the state and receipt root of the transition.
+    <span class="doccomment">/// Performs a state transition, and returns the state and receipt root of
+    /// the transition.
     </span><span class="attr">#[instrument(skip(<span class="self">self</span>, callback))]
     </span><span class="kw">pub async fn </span>compute_tipset_state&lt;CB: <span class="lifetime">&#39;static</span>&gt;(
         <span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;,
@@ -1906,9 +2002,8 @@
             Default::default()
         };
 
-        <span class="kw">let </span>async_handle = tokio::runtime::Handle::current();
         <span class="kw">let </span>tipset_keys = TipsetKeys::new(block_headers.iter().map(|s| s.cid()).cloned().collect());
-        <span class="kw">let </span>chain_rand = <span class="self">self</span>.chain_rand(tipset_keys, async_handle);
+        <span class="kw">let </span>chain_rand = <span class="self">self</span>.chain_rand(tipset_keys);
         <span class="kw">let </span>base_fee = first_block.parent_base_fee().clone();
 
         <span class="kw">let </span>blocks = <span class="self">self
@@ -1927,7 +2022,7 @@
                 <span class="kw-2">&amp;</span>blocks,
                 epoch,
                 chain_rand,
-                base_fee,
+                base_fee.into(),
                 callback,
                 <span class="kw-2">&amp;</span>ts_cloned,
             )<span class="question-mark">?</span>)
@@ -1936,9 +2031,9 @@
         </span>.map_err(|e| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;failed to apply blocks: {e}&quot;</span>)))<span class="question-mark">?
     </span>}
 
-    <span class="doccomment">/// Check if tipset had executed the message, by loading the receipt based on the index of
-    /// the message in the block.
-    </span><span class="kw">async fn </span>tipset_executed_message(
+    <span class="doccomment">/// Check if tipset had executed the message, by loading the receipt based
+    /// on the index of the message in the block.
+    </span><span class="kw">fn </span>tipset_executed_message(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tipset: <span class="kw-2">&amp;</span>Tipset,
         msg_cid: Cid,
@@ -1951,8 +2046,7 @@
         </span><span class="kw">let </span>pts = <span class="self">self
             </span>.cs
             .tipset_from_keys(tipset.parents())
-            .<span class="kw">await
-            </span>.map_err(|err| Error::Other(err.to_string()))<span class="question-mark">?</span>;
+            .map_err(|err| Error::Other(err.to_string()))<span class="question-mark">?</span>;
         <span class="kw">let </span>messages = <span class="self">self
             </span>.cs
             .messages_for_tipset(<span class="kw-2">&amp;</span>pts)
@@ -1996,77 +2090,58 @@
             .unwrap_or(<span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>))
     }
 
-    <span class="kw">async fn </span>check_search(
+    <span class="kw">fn </span>check_search(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        current: <span class="kw-2">&amp;</span>Tipset,
+        <span class="kw-2">mut </span>current: Arc&lt;Tipset&gt;,
         (message_from_address, message_cid, message_sequence): (<span class="kw-2">&amp;</span>Address, <span class="kw-2">&amp;</span>Cid, <span class="kw-2">&amp;</span>u64),
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(Arc&lt;Tipset&gt;, Receipt)&gt;, <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt;&gt; {
-        <span class="kw">if </span>current.epoch() == <span class="number">0 </span>{
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
-        }
-        <span class="kw">let </span>state = StateTree::new_from_root(<span class="self">self</span>.blockstore(), current.parent_state())
-            .map_err(|e| <span class="prelude-val">Err</span>(Error::State(e.to_string())))<span class="question-mark">?</span>;
-
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(actor_state) = state
-            .get_actor(message_from_address)
-            .map_err(|e| <span class="prelude-val">Err</span>(Error::State(e.to_string())))<span class="question-mark">?
-        </span>{
-            <span class="kw">if </span>actor_state.sequence == <span class="number">0 </span>|| actor_state.sequence &lt; <span class="kw-2">*</span>message_sequence {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(Arc&lt;Tipset&gt;, Receipt)&gt;, Error&gt; {
+        <span class="kw">loop </span>{
+            <span class="kw">if </span>current.epoch() == <span class="number">0 </span>{
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
             }
-        }
+            <span class="kw">let </span>state = StateTree::new_from_root(<span class="self">self</span>.blockstore(), current.parent_state())
+                .map_err(|e| Error::State(e.to_string()))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>tipset = <span class="self">self
-            </span>.cs
-            .tipset_from_keys(current.parents())
-            .<span class="kw">await
-            </span>.map_err(|err| {
-                <span class="prelude-val">Err</span>(Error::Other(<span class="macro">format!</span>(
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(actor_state) = state
+                .get_actor(message_from_address)
+                .map_err(|e| Error::State(e.to_string()))<span class="question-mark">?
+            </span>{
+                <span class="kw">if </span>actor_state.sequence == <span class="number">0 </span>|| actor_state.sequence &lt; <span class="kw-2">*</span>message_sequence {
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+                }
+            }
+
+            <span class="kw">let </span>tipset = <span class="self">self</span>.cs.tipset_from_keys(current.parents()).map_err(|err| {
+                Error::Other(<span class="macro">format!</span>(
                     <span class="string">&quot;failed to load tipset during msg wait searchback: {err:}&quot;
-                </span>)))
+                </span>))
             })<span class="question-mark">?</span>;
-        <span class="kw">let </span>r = <span class="self">self
-            </span>.tipset_executed_message(
+            <span class="kw">let </span>r = <span class="self">self</span>.tipset_executed_message(
                 <span class="kw-2">&amp;</span>tipset,
                 <span class="kw-2">*</span>message_cid,
                 (message_from_address, message_sequence),
-            )
-            .<span class="kw">await
-            </span>.map_err(<span class="prelude-val">Err</span>)<span class="question-mark">?</span>;
+            )<span class="question-mark">?</span>;
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(receipt) = r {
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((tipset, receipt)))
-        } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(<span class="prelude-val">Ok</span>(tipset))
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(receipt) = r {
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((tipset, receipt)));
+            }
+            current = tipset;
         }
     }
 
-    <span class="kw">async fn </span>search_back_for_message(
+    <span class="kw">fn </span>search_back_for_message(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        current: <span class="kw-2">&amp;</span>Tipset,
+        current: Arc&lt;Tipset&gt;,
         params: (<span class="kw-2">&amp;</span>Address, <span class="kw-2">&amp;</span>Cid, <span class="kw-2">&amp;</span>u64),
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(Arc&lt;Tipset&gt;, Receipt)&gt;, Error&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>ts: Arc&lt;Tipset&gt; = <span class="kw">match </span><span class="self">self</span>.check_search(current, params).<span class="kw">await </span>{
-            <span class="prelude-val">Ok</span>(res) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(res),
-            <span class="prelude-val">Err</span>(e) =&gt; e<span class="question-mark">?</span>,
-        };
-
-        <span class="comment">// Loops until message is found, genesis is hit, or an error is encountered
-        </span><span class="kw">loop </span>{
-            ts = <span class="kw">match </span><span class="self">self</span>.check_search(<span class="kw-2">&amp;</span>ts, params).<span class="kw">await </span>{
-                <span class="prelude-val">Ok</span>(res) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(res),
-                <span class="prelude-val">Err</span>(e) =&gt; e<span class="question-mark">?</span>,
-            };
-        }
+        <span class="self">self</span>.check_search(current, params)
     }
     <span class="doccomment">/// Returns a message receipt from a given tipset and message CID.
-    </span><span class="kw">pub async fn </span>get_receipt(<span class="kw-2">&amp;</span><span class="self">self</span>, tipset: <span class="kw-2">&amp;</span>Tipset, msg: Cid) -&gt; <span class="prelude-ty">Result</span>&lt;Receipt, Error&gt; {
+    </span><span class="kw">pub fn </span>get_receipt(<span class="kw-2">&amp;</span><span class="self">self</span>, tipset: Arc&lt;Tipset&gt;, msg: Cid) -&gt; <span class="prelude-ty">Result</span>&lt;Receipt, Error&gt; {
         <span class="kw">let </span>m = forest_chain::get_chain_message(<span class="self">self</span>.blockstore(), <span class="kw-2">&amp;</span>msg)
             .map_err(|e| Error::Other(e.to_string()))<span class="question-mark">?</span>;
         <span class="kw">let </span>message_var = (m.from(), <span class="kw-2">&amp;</span>m.sequence());
-        <span class="kw">let </span>message_receipt = <span class="self">self
-            </span>.tipset_executed_message(tipset, msg, message_var)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>message_receipt = <span class="self">self</span>.tipset_executed_message(<span class="kw-2">&amp;</span>tipset, msg, message_var)<span class="question-mark">?</span>;
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(receipt) = message_receipt {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(receipt);
@@ -2075,7 +2150,7 @@
             .cid()
             .map_err(|e| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;Could not convert message to cid {e:?}&quot;</span>)))<span class="question-mark">?</span>;
         <span class="kw">let </span>message_var = (m.from(), <span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>m.sequence());
-        <span class="kw">let </span>maybe_tuple = <span class="self">self</span>.search_back_for_message(tipset, message_var).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>maybe_tuple = <span class="self">self</span>.search_back_for_message(tipset, message_var)<span class="question-mark">?</span>;
         <span class="kw">let </span>message_receipt = maybe_tuple
             .ok_or_else(|| {
                 Error::Other(<span class="string">&quot;Could not get receipt from search back message&quot;</span>.to_string())
@@ -2084,9 +2159,10 @@
         <span class="prelude-val">Ok</span>(message_receipt)
     }
 
-    <span class="doccomment">/// `WaitForMessage` blocks until a message appears on chain. It looks backwards in the
-    /// chain to see if this has already happened. It guarantees that the message has been on chain
-    /// for at least confidence epochs without being reverted before returning.
+    <span class="doccomment">/// `WaitForMessage` blocks until a message appears on chain. It looks
+    /// backwards in the chain to see if this has already happened. It
+    /// guarantees that the message has been on chain for at least
+    /// confidence epochs without being reverted before returning.
     </span><span class="kw">pub async fn </span>wait_for_message(
         <span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;,
         msg_cid: Cid,
@@ -2101,10 +2177,9 @@
             .map_err(|err| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;failed to load message {err:}&quot;</span>)))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>message_var = (message.from(), <span class="kw-2">&amp;</span>message.sequence());
-        <span class="kw">let </span>current_tipset = <span class="self">self</span>.cs.heaviest_tipset().<span class="kw">await</span>.unwrap();
-        <span class="kw">let </span>maybe_message_reciept = <span class="self">self
-            </span>.tipset_executed_message(<span class="kw-2">&amp;</span>current_tipset, msg_cid, message_var)
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>current_tipset = <span class="self">self</span>.cs.heaviest_tipset();
+        <span class="kw">let </span>maybe_message_reciept =
+            <span class="self">self</span>.tipset_executed_message(<span class="kw-2">&amp;</span>current_tipset, msg_cid, message_var)<span class="question-mark">?</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(r) = maybe_message_reciept {
             <span class="kw">return </span><span class="prelude-val">Ok</span>((<span class="prelude-val">Some</span>(current_tipset.clone()), <span class="prelude-val">Some</span>(r)));
         }
@@ -2122,12 +2197,10 @@
         <span class="kw">let </span>sequence_for_task = message.sequence();
         <span class="kw">let </span>height_of_head = current_tipset.epoch();
         <span class="kw">let </span>task = tokio::task::spawn(<span class="kw">async move </span>{
-            <span class="kw">let </span>back_tuple = sm_cloned
-                .search_back_for_message(
-                    <span class="kw-2">&amp;</span>current_tipset,
-                    (<span class="kw-2">&amp;</span>address_for_task, <span class="kw-2">&amp;</span>cid_for_task, <span class="kw-2">&amp;</span>sequence_for_task),
-                )
-                .<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>back_tuple = sm_cloned.search_back_for_message(
+                current_tipset,
+                (<span class="kw-2">&amp;</span>address_for_task, <span class="kw-2">&amp;</span>cid_for_task, <span class="kw-2">&amp;</span>sequence_for_task),
+            )<span class="question-mark">?</span>;
             sender
                 .send(())
                 .map_err(|e| Error::Other(<span class="macro">format!</span>(<span class="string">&quot;Could not send to channel {e:?}&quot;</span>)))<span class="question-mark">?</span>;
@@ -2166,9 +2239,8 @@
                             }
 
                             <span class="kw">let </span>message_var = (message.from(), <span class="kw-2">&amp;</span>message.sequence());
-                            <span class="kw">let </span>maybe_receipt = sm_cloned
-                                .tipset_executed_message(<span class="kw-2">&amp;</span>tipset, msg_cid, message_var)
-                                .<span class="kw">await</span><span class="question-mark">?</span>;
+                            <span class="kw">let </span>maybe_receipt =
+                                sm_cloned.tipset_executed_message(<span class="kw-2">&amp;</span>tipset, msg_cid, message_var)<span class="question-mark">?</span>;
                             <span class="kw">if let </span><span class="prelude-val">Some</span>(receipt) = maybe_receipt {
                                 <span class="kw">if </span>confidence == <span class="number">0 </span>{
                                     <span class="kw">return </span><span class="prelude-val">Ok</span>((<span class="prelude-val">Some</span>(tipset), <span class="prelude-val">Some</span>(receipt)));
@@ -2214,8 +2286,9 @@
         .fuse();
 
         <span class="comment">// Await on first future to finish.
-        // TODO this should be a future race. I don&#39;t think the task is being cancelled here
-        // This seems like it will keep the other task running even though it&#39;s unneeded.
+        // TODO this should be a future race. I don&#39;t think the task is being cancelled
+        // here This seems like it will keep the other task running even though
+        // it&#39;s unneeded.
         </span><span class="kw">loop </span>{
             <span class="macro">select! </span>{
                 res = subscriber_poll =&gt; {
@@ -2236,7 +2309,8 @@
         addr: <span class="kw-2">&amp;</span>Address,
         state_cid: Cid,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;[u8; BLS_PUB_LEN], Error&gt; {
-        <span class="kw">let </span>state = StateTree::new_from_root(db, <span class="kw-2">&amp;</span>state_cid)<span class="question-mark">?</span>;
+        <span class="kw">let </span>state =
+            StateTree::new_from_root(db, <span class="kw-2">&amp;</span>state_cid).map_err(|e| Error::Other(e.to_string()))<span class="question-mark">?</span>;
         <span class="kw">let </span>kaddr = resolve_to_key_addr(<span class="kw-2">&amp;</span>state, db, addr)
             .map_err(|e| <span class="macro">format!</span>(<span class="string">&quot;Failed to resolve key address, error: {e}&quot;</span>))<span class="question-mark">?</span>;
 
@@ -2249,28 +2323,28 @@
     }
 
     <span class="doccomment">/// Return the heaviest tipset&#39;s balance from self.db for a given address
-    </span><span class="kw">pub async fn </span>get_heaviest_balance(<span class="kw-2">&amp;</span><span class="self">self</span>, addr: <span class="kw-2">&amp;</span>Address) -&gt; <span class="prelude-ty">Result</span>&lt;TokenAmount, Error&gt; {
-        <span class="kw">let </span>ts = <span class="self">self
-            </span>.cs
-            .heaviest_tipset()
-            .<span class="kw">await
-            </span>.ok_or_else(|| Error::Other(<span class="string">&quot;could not get bs heaviest ts&quot;</span>.to_owned()))<span class="question-mark">?</span>;
-        <span class="kw">let </span>cid = ts.parent_state();
-        <span class="self">self</span>.get_balance(addr, <span class="kw-2">*</span>cid)
+    </span><span class="kw">pub fn </span>get_heaviest_balance(<span class="kw-2">&amp;</span><span class="self">self</span>, addr: <span class="kw-2">&amp;</span>Address) -&gt; <span class="prelude-ty">Result</span>&lt;TokenAmount, Error&gt; {
+        <span class="kw">let </span>cid = <span class="kw-2">*</span><span class="self">self</span>.cs.heaviest_tipset().parent_state();
+        <span class="self">self</span>.get_balance(addr, cid)
     }
 
     <span class="doccomment">/// Return the balance of a given address and `state_cid`
     </span><span class="kw">pub fn </span>get_balance(<span class="kw-2">&amp;</span><span class="self">self</span>, addr: <span class="kw-2">&amp;</span>Address, cid: Cid) -&gt; <span class="prelude-ty">Result</span>&lt;TokenAmount, Error&gt; {
         <span class="kw">let </span>act = <span class="self">self</span>.get_actor(addr, cid)<span class="question-mark">?</span>;
         <span class="kw">let </span>actor = act.ok_or_else(|| <span class="string">&quot;could not find actor&quot;</span>.to_owned())<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(actor.balance)
+        <span class="kw">let </span>balance = forest_shim::econ::TokenAmount::from(<span class="kw-2">&amp;</span>actor.balance);
+        <span class="prelude-val">Ok</span>(balance.into())
     }
 
     <span class="doccomment">/// Looks up ID [Address] from the state at the given [Tipset].
     </span><span class="kw">pub fn </span>lookup_id(<span class="kw-2">&amp;</span><span class="self">self</span>, addr: <span class="kw-2">&amp;</span>Address, ts: <span class="kw-2">&amp;</span>Tipset) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Address&gt;, Error&gt; {
         <span class="kw">let </span>state_tree = StateTree::new_from_root(<span class="self">self</span>.blockstore(), ts.parent_state())
             .map_err(|e| e.to_string())<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(state_tree.lookup_id(addr)<span class="question-mark">?</span>.map(Address::new_id))
+        <span class="kw">let </span>address = forest_shim::address::Address::from(addr);
+        <span class="prelude-val">Ok</span>(state_tree
+            .lookup_id(<span class="kw-2">&amp;</span>address.into())
+            .map_err(|e| Error::Other(e.to_string()))<span class="question-mark">?
+            </span>.map(Address::new_id))
     }
 
     <span class="doccomment">/// Retrieves market balance in escrow and locked tables.
@@ -2307,8 +2381,8 @@
         <span class="prelude-val">Ok</span>(out)
     }
 
-    <span class="doccomment">/// Similar to `resolve_to_key_addr` in the `forest_vm` crate but does not allow `Actor` type of addresses.
-    /// Uses `ts` to generate the VM state.
+    <span class="doccomment">/// Similar to `resolve_to_key_addr` in the `forest_vm` crate but does not
+    /// allow `Actor` type of addresses. Uses `ts` to generate the VM state.
     </span><span class="kw">pub async fn </span>resolve_to_key_addr(
         <span class="self">self</span>: <span class="kw-2">&amp;</span>Arc&lt;<span class="self">Self</span>&gt;,
         addr: <span class="kw-2">&amp;</span>Address,
@@ -2329,7 +2403,8 @@
         resolve_to_key_addr(<span class="kw-2">&amp;</span>state, <span class="self">self</span>.blockstore(), addr)
     }
 
-    <span class="doccomment">/// Checks power actor state for if miner meets consensus minimum requirements.
+    <span class="doccomment">/// Checks power actor state for if miner meets consensus minimum
+    /// requirements.
     </span><span class="kw">pub fn </span>miner_has_min_power(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         policy: <span class="kw-2">&amp;</span>Policy,
@@ -2357,7 +2432,7 @@
         }
         <span class="kw">let </span><span class="kw-2">mut </span>ts_chain = Vec::&lt;Arc&lt;Tipset&gt;&gt;::new();
         <span class="kw">while </span>ts.epoch() != height {
-            <span class="kw">let </span>next = <span class="self">self</span>.cs.tipset_from_keys(ts.parents()).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>next = <span class="self">self</span>.cs.tipset_from_keys(ts.parents())<span class="question-mark">?</span>;
             ts_chain.push(std::mem::replace(<span class="kw-2">&amp;mut </span>ts, next));
         }
         ts_chain.push(ts);
@@ -2366,14 +2441,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>last_receipt = <span class="kw-2">*</span>ts_chain.last().unwrap().blocks()[<span class="number">0</span>].message_receipts();
         <span class="kw">for </span>ts <span class="kw">in </span>ts_chain.iter().rev() {
             <span class="kw">if </span>ts.parent_state() != <span class="kw-2">&amp;</span>last_state {
-                forest_statediff::print_state_diff(
-                    <span class="self">self</span>.blockstore(),
-                    <span class="kw-2">&amp;</span>last_state,
-                    ts.parent_state(),
-                    <span class="prelude-val">Some</span>(<span class="number">1</span>),
-                )
-                .unwrap();
-
                 <span class="macro">anyhow::bail!</span>(
                     <span class="string">&quot;Tipset chain has state mismatch at height: {}, {} != {}, \
                         receipts mismatched: {}&quot;</span>,
@@ -2401,17 +2468,12 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn </span>chain_rand(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        blocks: TipsetKeys,
-        async_handle: tokio::runtime::Handle,
-    ) -&gt; ChainRand&lt;DB&gt; {
+    <span class="kw">fn </span>chain_rand(<span class="kw-2">&amp;</span><span class="self">self</span>, blocks: TipsetKeys) -&gt; ChainRand&lt;DB&gt; {
         ChainRand::new(
             <span class="self">self</span>.chain_config.clone(),
             blocks,
             <span class="self">self</span>.cs.clone(),
             <span class="self">self</span>.beacon.clone(),
-            async_handle,
         )
     }
 }
@@ -2419,22 +2481,14 @@
 <span class="kw">fn </span>chain_epoch_root&lt;DB&gt;(
     sm: Arc&lt;StateManager&lt;DB&gt;&gt;,
     tipset: Arc&lt;Tipset&gt;,
-    async_handle: Handle,
-) -&gt; Box&lt;<span class="kw">dyn </span>Fn(ChainEpoch) -&gt; Cid&gt;
+) -&gt; Box&lt;<span class="kw">dyn </span>Fn(ChainEpoch) -&gt; anyhow::Result&lt;Cid&gt;&gt;
 <span class="kw">where
-    </span><span class="comment">// Yes, both are needed, because the VM should only use the buffered store
     </span>DB: Blockstore + Store + Clone + Send + Sync + <span class="lifetime">&#39;static</span>,
 {
     Box::new(<span class="kw">move </span>|round| {
-        <span class="kw">let </span>(<span class="kw">_</span>, st) = tokio::task::block_in_place(|| {
-            async_handle
-                .block_on(sm.get_lookback_tipset_for_round(tipset.clone(), round))
-                .unwrap_or_else(|err| {
-                    <span class="macro">panic!</span>(<span class="string">&quot;Internal Error. Failed to find root CID for epoch {round}: {err}&quot;</span>)
-                })
-        });
-        st
+        <span class="kw">let </span>(<span class="kw">_</span>, st) = sm.get_lookback_tipset_for_round(tipset.clone(), round)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(st)
     })
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_state_manager" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_state_manager" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

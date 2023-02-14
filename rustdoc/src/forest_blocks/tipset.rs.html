@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/blocks/src/tipset.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>tipset.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_blocks/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/blocks/src/tipset.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>tipset.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_blocks/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -577,22 +577,55 @@
 <a href="#577" id="577">577</a>
 <a href="#578" id="578">578</a>
 <a href="#579" id="579">579</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use super</span>::{Block, BlockHeader, Error, Ticket};
+</span><span class="kw">use </span>ahash::{HashSet, HashSetExt};
 <span class="kw">use </span>cid::Cid;
 <span class="kw">use </span>fvm_ipld_encoding::Cbor;
-<span class="kw">use </span>fvm_shared::clock::ChainEpoch;
-<span class="kw">use </span>fvm_shared::{address::Address, bigint::BigInt};
+<span class="kw">use </span>fvm_shared::{address::Address, clock::ChainEpoch};
 <span class="kw">use </span>log::info;
+<span class="kw">use </span>num::BigInt;
 <span class="kw">use </span>once_cell::sync::OnceCell;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
-<span class="kw">use </span>std::collections::HashSet;
+
+<span class="kw">use super</span>::{Block, BlockHeader, Error, Ticket};
 
 <span class="doccomment">/// A set of `CIDs` forming a unique key for a Tipset.
-/// Equal keys will have equivalent iteration order, but note that the `CIDs` are *not* maintained in
-/// the same order as the canonical iteration order of blocks in a tipset (which is by ticket)
+/// Equal keys will have equivalent iteration order, but note that the `CIDs`
+/// are *not* maintained in the same order as the canonical iteration order of
+/// blocks in a tipset (which is by ticket)
 </span><span class="attr">#[derive(Clone, Debug, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
 #[serde(transparent)]
 </span><span class="kw">pub struct </span>TipsetKeys {
@@ -620,6 +653,24 @@
     key: OnceCell&lt;TipsetKeys&gt;,
 }
 
+<span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>BlockHeader&gt; <span class="kw">for </span>Tipset {
+    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span>BlockHeader) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            headers: <span class="macro">vec!</span>[value.clone()],
+            key: OnceCell::new(),
+        }
+    }
+}
+
+<span class="kw">impl </span>From&lt;BlockHeader&gt; <span class="kw">for </span>Tipset {
+    <span class="kw">fn </span>from(value: BlockHeader) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            headers: <span class="macro">vec!</span>[value],
+            key: OnceCell::new(),
+        }
+    }
+}
+
 <span class="kw">impl </span>PartialEq <span class="kw">for </span>Tipset {
     <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
         <span class="self">self</span>.headers.eq(<span class="kw-2">&amp;</span>other.headers)
@@ -629,21 +680,22 @@
 <span class="kw">impl </span>quickcheck::Arbitrary <span class="kw">for </span>Tipset {
     <span class="kw">fn </span>arbitrary(g: <span class="kw-2">&amp;mut </span>quickcheck::Gen) -&gt; <span class="self">Self </span>{
         <span class="comment">// XXX: Support random generation of tipsets with multiple blocks.
-        </span><span class="kw">let </span>first_header = BlockHeader::arbitrary(g);
-        Tipset::new(<span class="macro">vec!</span>[first_header]).unwrap()
+        </span>Tipset::from(BlockHeader::arbitrary(g))
     }
 }
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>property_tests {
-    <span class="kw">use </span><span class="kw">crate</span>::ArbitraryCid;
-
-    <span class="kw">use </span><span class="kw">super</span>::tipset_json::{TipsetJson, TipsetJsonRef};
-    <span class="kw">use </span><span class="kw">super</span>::tipset_keys_json::TipsetKeysJson;
-    <span class="kw">use super</span>::{Tipset, TipsetKeys};
     <span class="kw">use </span>cid::Cid;
     <span class="kw">use </span>quickcheck_macros::quickcheck;
     <span class="kw">use </span>serde_json;
+
+    <span class="kw">use super</span>::{
+        tipset_json::{TipsetJson, TipsetJsonRef},
+        tipset_keys_json::TipsetKeysJson,
+        Tipset, TipsetKeys,
+    };
+    <span class="kw">use </span><span class="kw">crate</span>::ArbitraryCid;
 
     <span class="kw">impl </span>quickcheck::Arbitrary <span class="kw">for </span>TipsetKeys {
         <span class="kw">fn </span>arbitrary(g: <span class="kw-2">&amp;mut </span>quickcheck::Gen) -&gt; <span class="self">Self </span>{
@@ -684,9 +736,10 @@
 <span class="attr">#[allow(clippy::len_without_is_empty)]
 </span><span class="kw">impl </span>Tipset {
     <span class="doccomment">/// Builds a new Tipset from a collection of blocks.
-    /// A valid tipset contains a non-empty collection of blocks that have distinct miners and all
-    /// specify identical epoch, parents, weight, height, state root, receipt root;
-    /// content-id for headers are supposed to be distinct but until encoding is added will be equal.
+    /// A valid tipset contains a non-empty collection of blocks that have
+    /// distinct miners and all specify identical epoch, parents, weight,
+    /// height, state root, receipt root; content-id for headers are
+    /// supposed to be distinct but until encoding is added will be equal.
     </span><span class="kw">pub fn </span>new(<span class="kw-2">mut </span>headers: Vec&lt;BlockHeader&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         verify_blocks(<span class="kw-2">&amp;</span>headers)<span class="question-mark">?</span>;
 
@@ -756,7 +809,8 @@
     </span><span class="kw">pub fn </span>weight(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BigInt {
         <span class="self">self</span>.min_ticket_block().weight()
     }
-    <span class="doccomment">/// Returns true if self wins according to the Filecoin tie-break rule (FIP-0023)
+    <span class="doccomment">/// Returns true if self wins according to the Filecoin tie-break rule
+    /// (FIP-0023)
     </span><span class="kw">pub fn </span>break_weight_tie(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>Tipset) -&gt; bool {
         <span class="comment">// blocks are already sorted by ticket
         </span><span class="kw">let </span>broken = <span class="self">self
@@ -779,7 +833,8 @@
     }
 }
 
-<span class="doccomment">/// `FullTipset` is an expanded version of a tipset that contains all the blocks and messages
+<span class="doccomment">/// `FullTipset` is an expanded version of a tipset that contains all the blocks
+/// and messages
 </span><span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>FullTipset {
     blocks: Vec&lt;Block&gt;,
@@ -796,8 +851,8 @@
     <span class="kw">pub fn </span>new(<span class="kw-2">mut </span>blocks: Vec&lt;Block&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         verify_blocks(blocks.iter().map(Block::header))<span class="question-mark">?</span>;
 
-        <span class="comment">// sort blocks on creation to allow for more seamless conversions between FullTipset
-        // and Tipset
+        <span class="comment">// sort blocks on creation to allow for more seamless conversions between
+        // FullTipset and Tipset
         </span>blocks.sort_by_cached_key(|block| block.header().to_sort_key());
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             blocks,
@@ -817,7 +872,8 @@
     </span><span class="kw">pub fn </span>into_blocks(<span class="self">self</span>) -&gt; Vec&lt;Block&gt; {
         <span class="self">self</span>.blocks
     }
-    <span class="doccomment">/// Converts the full tipset into a [Tipset] which removes the messages attached.
+    <span class="doccomment">/// Converts the full tipset into a [Tipset] which removes the messages
+    /// attached.
     </span><span class="kw">pub fn </span>into_tipset(<span class="self">self</span>) -&gt; Tipset {
         Tipset::from(<span class="self">self</span>)
     }
@@ -882,8 +938,9 @@
 }
 
 <span class="kw">pub mod </span>tipset_keys_json {
-    <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="attr">#[derive(Clone, Debug, Deserialize, Serialize)]
     #[serde(transparent)]
@@ -919,9 +976,11 @@
 }
 
 <span class="kw">pub mod </span>tipset_json {
-    <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span>serde::{de, Deserialize, Deserializer, Serialize, Serializer};
     <span class="kw">use </span>std::sync::Arc;
+
+    <span class="kw">use </span>serde::{de, Deserialize, Deserializer, Serialize, Serializer};
+
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="doccomment">/// Wrapper for serializing and de-serializing a `Tipset` from JSON.
     </span><span class="attr">#[derive(Debug, Deserialize, Serialize)]
@@ -992,14 +1051,16 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
-    <span class="kw">use crate</span>::{BlockHeader, ElectionProof, Error, Ticket, Tipset, TipsetKeys};
-    <span class="kw">use </span>cid::multihash::Code::Identity;
-    <span class="kw">use </span>cid::multihash::MultihashDigest;
-    <span class="kw">use </span>cid::Cid;
+    <span class="kw">use </span>cid::{
+        multihash::{Code::Identity, MultihashDigest},
+        Cid,
+    };
     <span class="kw">use </span>forest_crypto::VRFProof;
     <span class="kw">use </span>fvm_ipld_encoding::DAG_CBOR;
     <span class="kw">use </span>fvm_shared::address::Address;
     <span class="kw">use </span>num_bigint::BigInt;
+
+    <span class="kw">use crate</span>::{BlockHeader, ElectionProof, Error, Ticket, Tipset, TipsetKeys};
 
     <span class="kw">pub fn </span>mock_block(id: u64, weight: u64, ticket_sequence: u64) -&gt; BlockHeader {
         <span class="kw">let </span>addr = Address::new_id(id);
@@ -1028,13 +1089,13 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_break_weight_tie() {
         <span class="kw">let </span>b1 = mock_block(<span class="number">1234561</span>, <span class="number">1</span>, <span class="number">1</span>);
-        <span class="kw">let </span>ts1 = Tipset::new(<span class="macro">vec!</span>[b1.clone()]).unwrap();
+        <span class="kw">let </span>ts1 = Tipset::from(<span class="kw-2">&amp;</span>b1);
 
         <span class="kw">let </span>b2 = mock_block(<span class="number">1234562</span>, <span class="number">1</span>, <span class="number">2</span>);
-        <span class="kw">let </span>ts2 = Tipset::new(<span class="macro">vec!</span>[b2.clone()]).unwrap();
+        <span class="kw">let </span>ts2 = Tipset::from(<span class="kw-2">&amp;</span>b2);
 
         <span class="kw">let </span>b3 = mock_block(<span class="number">1234563</span>, <span class="number">1</span>, <span class="number">1</span>);
-        <span class="kw">let </span>ts3 = Tipset::new(<span class="macro">vec!</span>[b3]).unwrap();
+        <span class="kw">let </span>ts3 = Tipset::from(<span class="kw-2">&amp;</span>b3);
 
         <span class="comment">// All tipsets have the same weight (but it&#39;s not really important here)
 
@@ -1043,7 +1104,7 @@
         <span class="comment">// Can not break weight tie (because of same min tickets)
         </span><span class="macro">assert!</span>(!ts1.break_weight_tie(<span class="kw-2">&amp;</span>ts3));
 
-        <span class="comment">// Values are choosen so that Ticket(b4) &lt; Ticket(b5) &lt; Ticket(b1)
+        <span class="comment">// Values are chosen so that Ticket(b4) &lt; Ticket(b5) &lt; Ticket(b1)
         </span><span class="kw">let </span>b4 = mock_block(<span class="number">1234564</span>, <span class="number">1</span>, <span class="number">41</span>);
         <span class="kw">let </span>b5 = mock_block(<span class="number">1234565</span>, <span class="number">1</span>, <span class="number">45</span>);
         <span class="kw">let </span>ts4 = Tipset::new(<span class="macro">vec!</span>[b4.clone(), b5.clone(), b1.clone()]).unwrap();
@@ -1073,7 +1134,8 @@
         );
     }
 
-    <span class="comment">// specifically test the case when we are distinct from miner_address 0, but not 1
+    <span class="comment">// specifically test the case when we are distinct from miner_address 0, but not
+    // 1
     </span><span class="attr">#[test]
     </span><span class="kw">fn </span>ensure_multiple_miner_addresses_are_distinct() {
         <span class="kw">let </span>h0 = BlockHeader::builder()
@@ -1157,4 +1219,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_blocks" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_blocks" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

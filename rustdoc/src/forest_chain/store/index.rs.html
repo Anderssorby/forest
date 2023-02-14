@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/chain/src/store/index.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>index.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../forest_chain/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `blockchain/chain/src/store/index.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>index.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../forest_chain/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -309,10 +309,20 @@
 <a href="#309" id="309">309</a>
 <a href="#310" id="310">310</a>
 <a href="#311" id="311">311</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use crate</span>::{tipset_from_keys, Error, TipsetCache};
+</span><span class="kw">use </span>std::{num::NonZeroUsize, sync::Arc};
+
 <span class="kw">use </span>forest_blocks::{Tipset, TipsetKeys};
 <span class="kw">use </span>forest_metrics::metrics;
 <span class="kw">use </span>forest_utils::io::ProgressBar;
@@ -320,22 +330,26 @@
 <span class="kw">use </span>fvm_shared::clock::ChainEpoch;
 <span class="kw">use </span>log::info;
 <span class="kw">use </span>lru::LruCache;
-<span class="kw">use </span>std::{num::NonZeroUsize, sync::Arc};
-<span class="kw">use </span>tokio::sync::RwLock;
+<span class="kw">use </span>parking_lot::Mutex;
+
+<span class="kw">use crate</span>::{tipset_from_keys, Error, TipsetCache};
 
 <span class="kw">const </span>DEFAULT_CHAIN_INDEX_CACHE_SIZE: NonZeroUsize =
     <span class="macro">forest_utils::const_option!</span>(NonZeroUsize::new(<span class="number">32 </span>&lt;&lt; <span class="number">10</span>));
 
-<span class="doccomment">/// Configuration which sets the length of tipsets to skip in between each cached entry.
+<span class="doccomment">/// Configuration which sets the length of tipsets to skip in between each
+/// cached entry.
 </span><span class="kw">const </span>SKIP_LENGTH: ChainEpoch = <span class="number">20</span>;
 
-<span class="comment">// This module helps speed up boot times for forest by checkpointing previously seen tipsets from snapshots.
+<span class="comment">// This module helps speed up boot times for forest by checkpointing previously
+// seen tipsets from snapshots.
 </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">mod </span>checkpoint_tipsets {
+    <span class="kw">use </span>std::str::FromStr;
+
+    <span class="kw">use </span>ahash::{HashMap, HashMapExt, HashSet};
     <span class="kw">use </span>cid::Cid;
     <span class="kw">use </span>forest_blocks::TipsetKeys;
     <span class="kw">use </span>once_cell::sync::Lazy;
-    <span class="kw">use </span>std::collections::{HashMap, HashSet};
-    <span class="kw">use </span>std::str::FromStr;
 
     <span class="macro">macro_rules! </span>add_calibnet {
         (<span class="macro-nonterminal">$map</span>: ident, <span class="macro-nonterminal">$key_hash</span>:expr) =&gt; {
@@ -361,15 +375,17 @@
         };
     }
 
-    <span class="comment">// The hashes for these checkpoints is obtained by passing the tipset keys&#39; cids (tipset.cids())
-    // through a blake2b hasher.
+    <span class="comment">// The hashes for these checkpoints is obtained by passing the tipset keys&#39; cids
+    // (tipset.cids()) through a blake2b hasher.
     </span><span class="kw">type </span>TipsetKeyHash = <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str;
     <span class="kw">type </span>GenesisTipsetCids = TipsetKeys;
-    <span class="comment">// Represents a static map of validated tipset hashes which helps to remove the need to validate the tipset
-    // back to genesis if it has been validated before, thereby reducing boot times.
-    // NB: Add desired tipset checkpoints below this by using RPC command: forest-cli chain tipset-hash &lt;cid keys&gt;
-    // and one can use forest-cli chain validate-tipset-checkpoints to validate tipset hashes
-    // for entries that fall within the range of epochs in current downloaded snapshot file.
+    <span class="comment">// Represents a static map of validated tipset hashes which helps to remove the
+    // need to validate the tipset back to genesis if it has been validated
+    // before, thereby reducing boot times. NB: Add desired tipset checkpoints
+    // below this by using RPC command: forest-cli chain tipset-hash &lt;cid keys&gt;
+    // and one can use forest-cli chain validate-tipset-checkpoints to validate
+    // tipset hashes for entries that fall within the range of epochs in current
+    // downloaded snapshot file.
     </span><span class="kw">type </span>TipsetCheckpointsRegistry = HashMap&lt;TipsetKeyHash, GenesisTipsetCids&gt;;
     <span class="kw">pub static </span>CALIBNET_CHECKPOINTS: Lazy&lt;TipsetCheckpointsRegistry&gt; = Lazy::new(|| {
         <span class="kw">let </span><span class="kw-2">mut </span>map = HashMap::new();
@@ -431,7 +447,8 @@
     }
 }
 
-<span class="doccomment">/// `Lookback` entry to cache in the `ChainIndex`. Stores all relevant info when doing `lookbacks`.
+<span class="doccomment">/// `Lookback` entry to cache in the `ChainIndex`. Stores all relevant info when
+/// doing `lookbacks`.
 </span><span class="attr">#[derive(Clone, PartialEq, Debug)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>LookbackEntry {
     tipset: Arc&lt;Tipset&gt;,
@@ -440,11 +457,11 @@
     target: TipsetKeys,
 }
 
-<span class="doccomment">/// Keeps look-back tipsets in cache at a given interval `skip_length` and can be used to look-back
-/// at the chain to retrieve an old tipset.
+<span class="doccomment">/// Keeps look-back tipsets in cache at a given interval `skip_length` and can
+/// be used to look-back at the chain to retrieve an old tipset.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>ChainIndex&lt;BS&gt; {
     <span class="doccomment">/// Cache of look-back entries to speed up lookup.
-    </span>skip_cache: RwLock&lt;LruCache&lt;TipsetKeys, Arc&lt;LookbackEntry&gt;&gt;&gt;,
+    </span>skip_cache: Mutex&lt;LruCache&lt;TipsetKeys, Arc&lt;LookbackEntry&gt;&gt;&gt;,
 
     <span class="doccomment">/// `Arc` reference tipset cache.
     </span>ts_cache: Arc&lt;TipsetCache&gt;,
@@ -456,38 +473,39 @@
 <span class="kw">impl</span>&lt;BS: Blockstore&gt; ChainIndex&lt;BS&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(ts_cache: Arc&lt;TipsetCache&gt;, db: BS) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            skip_cache: RwLock::new(LruCache::new(DEFAULT_CHAIN_INDEX_CACHE_SIZE)),
+            skip_cache: Mutex::new(LruCache::new(DEFAULT_CHAIN_INDEX_CACHE_SIZE)),
             ts_cache,
             db,
         }
     }
 
-    <span class="kw">pub async fn </span>load_tipset(<span class="kw-2">&amp;</span><span class="self">self</span>, tsk: <span class="kw-2">&amp;</span>TipsetKeys) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt; {
-        tipset_from_keys(<span class="self">self</span>.ts_cache.as_ref(), <span class="kw-2">&amp;</span><span class="self">self</span>.db, tsk).<span class="kw">await
-    </span>}
+    <span class="kw">pub fn </span>load_tipset(<span class="kw-2">&amp;</span><span class="self">self</span>, tsk: <span class="kw-2">&amp;</span>TipsetKeys) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt; {
+        tipset_from_keys(<span class="self">self</span>.ts_cache.as_ref(), <span class="kw-2">&amp;</span><span class="self">self</span>.db, tsk)
+    }
 
-    <span class="doccomment">/// Loads tipset at `to` [`ChainEpoch`], loading from sparse cache and/or loading parents
-    /// from the `blockstore`.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>get_tipset_by_height(
+    <span class="doccomment">/// Loads tipset at `to` [`ChainEpoch`], loading from sparse cache and/or
+    /// loading parents from the `blockstore`.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_tipset_by_height(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         from: Arc&lt;Tipset&gt;,
         to: ChainEpoch,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt; {
         <span class="kw">if </span>from.epoch() - to &lt;= SKIP_LENGTH {
-            <span class="kw">return </span><span class="self">self</span>.walk_back(from, to).<span class="kw">await</span>;
+            <span class="kw">return </span><span class="self">self</span>.walk_back(from, to);
         }
         <span class="kw">let </span>total_size = from.epoch() - to;
         <span class="kw">let </span>pb = ProgressBar::new(total_size <span class="kw">as </span>u64);
         pb.message(<span class="string">&quot;Scanning blockchain &quot;</span>);
         pb.set_max_refresh_rate(<span class="prelude-val">Some</span>(std::time::Duration::from_millis(<span class="number">500</span>)));
 
-        <span class="kw">let </span>rounded = <span class="self">self</span>.round_down(from).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>rounded = <span class="self">self</span>.round_down(from)<span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>cur = rounded.key().clone();
+
         <span class="kw">const </span>MAX_COUNT: usize = <span class="number">100</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>counter = <span class="number">0</span>;
         <span class="kw">loop </span>{
-            <span class="kw">let </span>entry = <span class="self">self</span>.skip_cache.write().<span class="kw">await</span>.get(<span class="kw-2">&amp;</span>cur).cloned();
+            <span class="kw">let </span>entry = <span class="self">self</span>.skip_cache.lock().get(<span class="kw-2">&amp;</span>cur).cloned();
             <span class="kw">let </span>lbe = <span class="kw">if let </span><span class="prelude-val">Some</span>(cached) = entry {
                 metrics::LRU_CACHE_HIT
                     .with_label_values(<span class="kw-2">&amp;</span>[metrics::values::SKIP])
@@ -497,15 +515,15 @@
                 metrics::LRU_CACHE_MISS
                     .with_label_values(<span class="kw-2">&amp;</span>[metrics::values::SKIP])
                     .inc();
-                <span class="self">self</span>.fill_cache(std::mem::take(<span class="kw-2">&amp;mut </span>cur)).<span class="kw">await</span><span class="question-mark">?
+                <span class="self">self</span>.fill_cache(std::mem::take(<span class="kw-2">&amp;mut </span>cur))<span class="question-mark">?
             </span>};
 
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(genesis_tipset_keys) =
-                checkpoint_tipsets::genesis_from_checkpoint_tipset(lbe.tipset.key())
-            {
-                <span class="kw">if </span>to == <span class="number">0 </span>{
-                    <span class="kw">let </span>tipset =
-                        tipset_from_keys(<span class="kw-2">&amp;</span><span class="self">self</span>.ts_cache, <span class="kw-2">&amp;</span><span class="self">self</span>.db, <span class="kw-2">&amp;</span>genesis_tipset_keys).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">if </span>to == <span class="number">0 </span>{
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(genesis_tipset_keys) =
+                    checkpoint_tipsets::genesis_from_checkpoint_tipset(lbe.tipset.key())
+                {
+                    <span class="kw">let </span>tipset = tipset_from_keys(<span class="kw-2">&amp;</span><span class="self">self</span>.ts_cache, <span class="kw-2">&amp;</span><span class="self">self</span>.db, <span class="kw-2">&amp;</span>genesis_tipset_keys)<span class="question-mark">?</span>;
+                    pb.set(total_size <span class="kw">as </span>u64);
                     <span class="macro">info!</span>(
                         <span class="string">&quot;Resolving genesis using checkpoint tipset at height: {}&quot;</span>,
                         lbe.tipset.epoch()
@@ -517,7 +535,7 @@
             <span class="kw">if </span>lbe.tipset.epoch() == to || lbe.parent_height &lt; to {
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(lbe.tipset.clone());
             } <span class="kw">else if </span>to &gt; lbe.target_height {
-                <span class="kw">return </span><span class="self">self</span>.walk_back(lbe.tipset.clone(), to).<span class="kw">await</span>;
+                <span class="kw">return </span><span class="self">self</span>.walk_back(lbe.tipset.clone(), to);
             }
             <span class="kw">let </span>to_be_done = lbe.tipset.epoch() - to;
             <span class="comment">// Don&#39;t show the progress bar if we&#39;re doing less than 10_000 units of work.
@@ -529,7 +547,6 @@
 
             <span class="kw">if </span>counter == MAX_COUNT {
                 counter = <span class="number">0</span>;
-                tokio::task::yield_now().<span class="kw">await</span>;
             } <span class="kw">else </span>{
                 counter += <span class="number">1</span>;
             }
@@ -538,17 +555,17 @@
 
     <span class="doccomment">/// Walks back from the tipset, ignoring the cached entries.
     /// This should only be used when the cache is checked to be invalidated.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>get_tipset_by_height_without_cache(
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_tipset_by_height_without_cache(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         from: Arc&lt;Tipset&gt;,
         to: ChainEpoch,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt; {
-        <span class="self">self</span>.walk_back(from, to).<span class="kw">await
-    </span>}
+        <span class="self">self</span>.walk_back(from, to)
+    }
 
     <span class="doccomment">/// Fills cache with look-back entry, and returns inserted entry.
-    </span><span class="kw">async fn </span>fill_cache(<span class="kw-2">&amp;</span><span class="self">self</span>, tsk: TipsetKeys) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;LookbackEntry&gt;, Error&gt; {
-        <span class="kw">let </span>tipset = <span class="self">self</span>.load_tipset(<span class="kw-2">&amp;</span>tsk).<span class="kw">await</span><span class="question-mark">?</span>;
+    </span><span class="kw">fn </span>fill_cache(<span class="kw-2">&amp;</span><span class="self">self</span>, tsk: TipsetKeys) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;LookbackEntry&gt;, Error&gt; {
+        <span class="kw">let </span>tipset = <span class="self">self</span>.load_tipset(<span class="kw-2">&amp;</span>tsk)<span class="question-mark">?</span>;
 
         <span class="kw">if </span>tipset.epoch() == <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(Arc::new(LookbackEntry {
@@ -559,14 +576,14 @@
             }));
         }
 
-        <span class="kw">let </span>parent = <span class="self">self</span>.load_tipset(tipset.parents()).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>parent = <span class="self">self</span>.load_tipset(tipset.parents())<span class="question-mark">?</span>;
         <span class="kw">let </span>r_height = <span class="self">self</span>.round_height(tipset.epoch()) - SKIP_LENGTH;
 
         <span class="kw">let </span>parent_epoch = parent.epoch();
         <span class="kw">let </span>skip_target = <span class="kw">if </span>parent.epoch() &lt; r_height {
             parent
         } <span class="kw">else </span>{
-            <span class="self">self</span>.walk_back(parent, r_height).<span class="kw">await</span><span class="question-mark">?
+            <span class="self">self</span>.walk_back(parent, r_height)<span class="question-mark">?
         </span>};
 
         <span class="kw">let </span>lbe = Arc::new(LookbackEntry {
@@ -576,7 +593,7 @@
             target: skip_target.key().clone(),
         });
 
-        <span class="self">self</span>.skip_cache.write().<span class="kw">await</span>.put(tsk.clone(), lbe.clone());
+        <span class="self">self</span>.skip_cache.lock().put(tsk, lbe.clone());
         <span class="prelude-val">Ok</span>(lbe)
     }
 
@@ -585,15 +602,16 @@
         (height / SKIP_LENGTH) * SKIP_LENGTH
     }
 
-    <span class="doccomment">/// Gets the closest rounded sparse index and returns the loaded tipset at that index.
-    </span><span class="kw">async fn </span>round_down(<span class="kw-2">&amp;</span><span class="self">self</span>, ts: Arc&lt;Tipset&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt; {
+    <span class="doccomment">/// Gets the closest rounded sparse index and returns the loaded tipset at
+    /// that index.
+    </span><span class="kw">fn </span>round_down(<span class="kw-2">&amp;</span><span class="self">self</span>, ts: Arc&lt;Tipset&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt; {
         <span class="kw">let </span>target = <span class="self">self</span>.round_height(ts.epoch());
 
-        <span class="self">self</span>.walk_back(ts, target).<span class="kw">await
-    </span>}
+        <span class="self">self</span>.walk_back(ts, target)
+    }
 
     <span class="doccomment">/// Load parent tipsets until the `to` [`ChainEpoch`].
-    </span><span class="kw">async fn </span>walk_back(<span class="kw-2">&amp;</span><span class="self">self</span>, from: Arc&lt;Tipset&gt;, to: ChainEpoch) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt; {
+    </span><span class="kw">fn </span>walk_back(<span class="kw-2">&amp;</span><span class="self">self</span>, from: Arc&lt;Tipset&gt;, to: ChainEpoch) -&gt; <span class="prelude-ty">Result</span>&lt;Arc&lt;Tipset&gt;, Error&gt; {
         <span class="kw">if </span>to &gt; from.epoch() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Other(
                 <span class="string">&quot;Looking for tipset with height greater than start point&quot;</span>.to_string(),
@@ -606,7 +624,7 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>ts = from;
         <span class="kw">loop </span>{
-            <span class="kw">let </span>pts = <span class="self">self</span>.load_tipset(ts.parents()).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>pts = <span class="self">self</span>.load_tipset(ts.parents())<span class="question-mark">?</span>;
 
             <span class="kw">if </span>to &gt; pts.epoch() {
                 <span class="comment">// Pts is lower than to epoch, return the tipset above that height
@@ -621,4 +639,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="forest_chain" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="forest_chain" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

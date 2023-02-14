@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `forest/daemon/src/daemon.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>daemon.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `forest/daemon/src/daemon.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>daemon.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -570,57 +570,82 @@
 <a href="#570" id="570">570</a>
 <a href="#571" id="571">571</a>
 <a href="#572" id="572">572</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
 
-</span><span class="kw">use </span><span class="kw">super</span>::cli::set_sigint_handler;
+</span><span class="kw">use </span>std::{io::prelude::<span class="kw-2">*</span>, net::TcpListener, path::PathBuf, sync::Arc, time, time::Duration};
+
 <span class="kw">use </span>anyhow::Context;
 <span class="kw">use </span>dialoguer::{theme::ColorfulTheme, Confirm};
 <span class="kw">use </span>forest_auth::{create_token, generate_priv_key, ADMIN, JWT_IDENTIFIER};
+<span class="kw">use </span>forest_blocks::Tipset;
 <span class="kw">use </span>forest_chain::ChainStore;
-<span class="kw">use </span>forest_chain_sync::consensus::SyncGossipSubmitter;
-<span class="kw">use </span>forest_chain_sync::ChainMuxer;
-<span class="kw">use </span>forest_cli_shared::cli::{
-    db_path, default_snapshot_dir, is_aria2_installed, snapshot_fetch, Client, Config,
-    FOREST_VERSION_STRING,
+<span class="kw">use </span>forest_chain_sync::{consensus::SyncGossipSubmitter, ChainMuxer};
+<span class="kw">use </span>forest_cli_shared::{
+    chain_path,
+    cli::{
+        default_snapshot_dir, is_aria2_installed, snapshot_fetch, snapshot_fetch_size,
+        to_size_string, Client, Config, FOREST_VERSION_STRING,
+    },
 };
-<span class="kw">use </span>forest_db::Store;
+<span class="kw">use </span>forest_db::{
+    db_engine::{db_path, open_db, Db},
+    Store,
+};
 <span class="kw">use </span>forest_genesis::{get_network_name_from_genesis, import_chain, read_genesis_header};
-<span class="kw">use </span>forest_key_management::ENCRYPTED_KEYSTORE_NAME;
-<span class="kw">use </span>forest_key_management::{KeyStore, KeyStoreConfig};
-<span class="kw">use </span>forest_libp2p::PeerId;
-<span class="kw">use </span>forest_libp2p::{ed25519, get_keypair, Keypair, Libp2pConfig, Libp2pService};
+<span class="kw">use </span>forest_key_management::{
+    KeyStore, KeyStoreConfig, ENCRYPTED_KEYSTORE_NAME, FOREST_KEYSTORE_PHRASE_ENV,
+};
+<span class="kw">use </span>forest_libp2p::{
+    ed25519, get_keypair, Keypair, Libp2pConfig, Libp2pService, PeerId, PeerManager,
+};
 <span class="kw">use </span>forest_message_pool::{MessagePool, MpoolConfig, MpoolRpcProvider};
 <span class="kw">use </span>forest_rpc::start_rpc;
 <span class="kw">use </span>forest_rpc_api::data_types::RPCState;
+<span class="kw">use </span>forest_shim::version::NetworkVersion;
 <span class="kw">use </span>forest_state_manager::StateManager;
 <span class="kw">use </span>forest_utils::io::write_to_file;
 <span class="kw">use </span>futures::{select, FutureExt};
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
-<span class="kw">use </span>fvm_shared::version::NetworkVersion;
 <span class="kw">use </span>log::{debug, error, info, warn};
 <span class="kw">use </span>raw_sync::events::{Event, EventInit, EventState};
 <span class="kw">use </span>rpassword::read_password;
-<span class="kw">use </span>std::net::TcpListener;
-<span class="kw">use </span>std::time::Duration;
-<span class="kw">use </span>tokio::sync::RwLock;
-<span class="kw">use </span>tokio::task::JoinSet;
+<span class="kw">use </span>tokio::{sync::RwLock, task::JoinSet};
 
-<span class="kw">use </span>std::io::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>std::path::PathBuf;
-<span class="kw">use </span>std::sync::Arc;
-<span class="kw">use </span>std::time;
+<span class="kw">use </span><span class="kw">super</span>::cli::set_sigint_handler;
 
 <span class="comment">// Initialize Consensus
 </span><span class="attr">#[cfg(not(any(feature = <span class="string">&quot;forest_fil_cns&quot;</span>, feature = <span class="string">&quot;forest_deleg_cns&quot;</span>)))]
 </span><span class="macro">compile_error!</span>(<span class="string">&quot;No consensus feature enabled; use e.g. `--feature forest_fil_cns` to pick one.&quot;</span>);
 
 <span class="comment">// Default consensus
-</span><span class="attr">#[cfg(all(feature = <span class="string">&quot;forest_fil_cns&quot;</span>, not(any(feature = <span class="string">&quot;forest_deleg_cns&quot;</span>))))]
-</span><span class="kw">use </span>forest_fil_cns::composition <span class="kw">as </span>cns;
-<span class="comment">// Custom consensus.
+// Custom consensus.
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;forest_deleg_cns&quot;</span>)]
 </span><span class="kw">use </span>forest_deleg_cns::composition <span class="kw">as </span>cns;
+<span class="attr">#[cfg(all(feature = <span class="string">&quot;forest_fil_cns&quot;</span>, not(any(feature = <span class="string">&quot;forest_deleg_cns&quot;</span>))))]
+</span><span class="kw">use </span>forest_fil_cns::composition <span class="kw">as </span>cns;
 
 <span class="kw">fn </span>unblock_parent_process() -&gt; anyhow::Result&lt;()&gt; {
     <span class="kw">let </span>shmem = <span class="kw">super</span>::ipc_shmem_conf().open()<span class="question-mark">?</span>;
@@ -655,60 +680,26 @@
         }
     }<span class="question-mark">?</span>;
 
-    <span class="comment">// Hint at the multihash which has to go in the `/p2p/&lt;multihash&gt;` part of the peer&#39;s multiaddress.
-    // Useful if others want to use this node to bootstrap from.
+    <span class="comment">// Hint at the multihash which has to go in the `/p2p/&lt;multihash&gt;` part of the
+    // peer&#39;s multiaddress. Useful if others want to use this node to bootstrap
+    // from.
     </span><span class="macro">info!</span>(<span class="string">&quot;PeerId: {}&quot;</span>, PeerId::from(net_keypair.public()));
 
-    <span class="kw">let </span><span class="kw-2">mut </span>ks = <span class="kw">if </span>config.client.encrypt_keystore {
-        <span class="kw">loop </span>{
-            <span class="macro">print!</span>(<span class="string">&quot;Enter the keystore passphrase: &quot;</span>);
-            std::io::stdout().flush()<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>keystore = create_keystore(<span class="kw-2">&amp;</span>config)<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>passphrase = read_password()<span class="question-mark">?</span>;
-
-            <span class="kw">let </span>data_dir = PathBuf::from(<span class="kw-2">&amp;</span>config.client.data_dir).join(ENCRYPTED_KEYSTORE_NAME);
-            <span class="kw">if </span>!data_dir.exists() {
-                <span class="macro">print!</span>(<span class="string">&quot;Confirm passphrase: &quot;</span>);
-                std::io::stdout().flush()<span class="question-mark">?</span>;
-
-                <span class="kw">if </span>passphrase != read_password()<span class="question-mark">? </span>{
-                    <span class="macro">error!</span>(<span class="string">&quot;Passphrases do not match. Please retry.&quot;</span>);
-                    <span class="kw">continue</span>;
-                }
-            }
-
-            <span class="kw">let </span>key_store_init_result = KeyStore::new(KeyStoreConfig::Encrypted(
-                PathBuf::from(<span class="kw-2">&amp;</span>config.client.data_dir),
-                passphrase,
-            ));
-
-            <span class="kw">match </span>key_store_init_result {
-                <span class="prelude-val">Ok</span>(ks) =&gt; <span class="kw">break </span>ks,
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
-                    <span class="macro">error!</span>(<span class="string">&quot;Incorrect passphrase entered. Please try again.&quot;</span>)
-                }
-            };
-        }
-    } <span class="kw">else </span>{
-        <span class="macro">warn!</span>(<span class="string">&quot;Warning: Keystore encryption disabled!&quot;</span>);
-        KeyStore::new(KeyStoreConfig::Persistent(PathBuf::from(
-            <span class="kw-2">&amp;</span>config.client.data_dir,
-        )))<span class="question-mark">?
-    </span>};
-
-    <span class="kw">if </span>ks.get(JWT_IDENTIFIER).is_err() {
-        ks.put(JWT_IDENTIFIER.to_owned(), generate_priv_key())<span class="question-mark">?</span>;
+    <span class="kw">if </span>keystore.get(JWT_IDENTIFIER).is_err() {
+        keystore.put(JWT_IDENTIFIER.to_owned(), generate_priv_key())<span class="question-mark">?</span>;
     }
 
     <span class="comment">// Print admin token
-    </span><span class="kw">let </span>ki = ks.get(JWT_IDENTIFIER)<span class="question-mark">?</span>;
+    </span><span class="kw">let </span>ki = keystore.get(JWT_IDENTIFIER)<span class="question-mark">?</span>;
     <span class="kw">let </span>token_exp = config.client.token_exp;
     <span class="kw">let </span>token = create_token(ADMIN.to_owned(), ki.private_key(), token_exp)<span class="question-mark">?</span>;
     <span class="macro">info!</span>(<span class="string">&quot;Admin token: {}&quot;</span>, token);
 
-    <span class="kw">let </span>keystore = Arc::new(RwLock::new(ks));
+    <span class="kw">let </span>keystore = Arc::new(RwLock::new(keystore));
 
-    <span class="kw">let </span>db = open_db(<span class="kw-2">&amp;</span>config)<span class="question-mark">?</span>;
+    <span class="kw">let </span>db = open_db(<span class="kw-2">&amp;</span>db_path(<span class="kw-2">&amp;</span>chain_path(<span class="kw-2">&amp;</span>config)), config.db_config())<span class="question-mark">?</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>services = JoinSet::new();
 
@@ -721,7 +712,7 @@
             <span class="string">&quot;Prometheus server started at {}&quot;</span>,
             config.client.metrics_address
         );
-        <span class="kw">let </span>db_directory = db_path(<span class="kw-2">&amp;</span>config);
+        <span class="kw">let </span>db_directory = forest_db::db_engine::db_path(<span class="kw-2">&amp;</span>chain_path(<span class="kw-2">&amp;</span>config));
         <span class="kw">let </span>db = db.clone();
         services.spawn(<span class="kw">async </span>{
             forest_metrics::init_prometheus(prometheus_listener, db_directory, db)
@@ -730,40 +721,43 @@
         });
     }
 
-    <span class="comment">// Initialize ChainStore
-    </span><span class="kw">let </span>chain_store = Arc::new(ChainStore::new(db.clone()).<span class="kw">await</span>);
-
-    <span class="kw">let </span>publisher = chain_store.publisher();
-
     <span class="comment">// Read Genesis file
-    // * When snapshot command implemented, this genesis does not need to be initialized
-    </span><span class="kw">let </span>genesis = read_genesis_header(
+    // * When snapshot command implemented, this genesis does not need to be
+    //   initialized
+    </span><span class="kw">let </span>genesis_header = read_genesis_header(
         config.client.genesis_file.as_ref(),
         config.chain.genesis_bytes(),
-        <span class="kw-2">&amp;</span>chain_store,
+        <span class="kw-2">&amp;</span>db,
     )
     .<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="kw">let </span>genesis_header = <span class="kw-2">&amp;</span>genesis.blocks()[<span class="number">0</span>];
-    chain_store.set_genesis(genesis_header)<span class="question-mark">?</span>;
+
+    <span class="comment">// Initialize ChainStore
+    </span><span class="kw">let </span>chain_store = Arc::new(ChainStore::new(
+        db.clone(),
+        config.chain.clone(),
+        <span class="kw-2">&amp;</span>genesis_header,
+    )<span class="question-mark">?</span>);
+
+    chain_store.set_genesis(<span class="kw-2">&amp;</span>genesis_header)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>publisher = chain_store.publisher();
 
     <span class="comment">// XXX: This code has to be run before starting the background services.
     //      If it isn&#39;t, several threads will be competing for access to stdout.
     // Terminate if no snapshot is provided or DB isn&#39;t recent enough
-    </span><span class="kw">let </span>should_fetch_snapshot = <span class="kw">match </span>chain_store.heaviest_tipset().<span class="kw">await </span>{
-        <span class="prelude-val">None </span>=&gt; prompt_snapshot_or_die(<span class="kw-2">&amp;</span>config).<span class="kw">await</span><span class="question-mark">?</span>,
-        <span class="prelude-val">Some</span>(tipset) =&gt; {
-            <span class="kw">let </span>epoch = tipset.epoch();
-            <span class="kw">let </span>nv = config.chain.network_version(epoch);
-            <span class="kw">if </span>nv &lt; NetworkVersion::V16 {
-                prompt_snapshot_or_die(<span class="kw-2">&amp;</span>config).<span class="kw">await</span><span class="question-mark">?
-            </span>} <span class="kw">else </span>{
-                <span class="bool-val">false
-            </span>}
-        }
-    };
 
-    <span class="comment">// Reward calculation is needed by the VM to calculate state, which can happen essentially anywhere the `StateManager` is called.
-    // It is consensus specific, but threading it through the type system would be a nightmare, which is why dynamic dispatch is used.
+    </span><span class="kw">let </span>epoch = chain_store.heaviest_tipset().epoch();
+    <span class="kw">let </span>nv = config.chain.network_version(epoch);
+    <span class="kw">let </span>should_fetch_snapshot = <span class="kw">if </span>nv &lt; NetworkVersion::V16 {
+        prompt_snapshot_or_die(<span class="kw-2">&amp;</span>config).<span class="kw">await</span><span class="question-mark">?
+    </span>} <span class="kw">else </span>{
+        <span class="bool-val">false
+    </span>};
+
+    <span class="comment">// Reward calculation is needed by the VM to calculate state, which can happen
+    // essentially anywhere the `StateManager` is called. It is consensus
+    // specific, but threading it through the type system would be a nightmare,
+    // which is why dynamic dispatch is used.
     </span><span class="kw">let </span>reward_calc = cns::reward_calc();
 
     <span class="comment">// Initialize StateManager
@@ -771,12 +765,11 @@
         Arc::clone(<span class="kw-2">&amp;</span>chain_store),
         Arc::clone(<span class="kw-2">&amp;</span>config.chain),
         reward_calc,
-    )
-    .<span class="kw">await</span><span class="question-mark">?</span>;
+    )<span class="question-mark">?</span>;
 
     <span class="kw">let </span>state_manager = Arc::new(sm);
 
-    <span class="kw">let </span>network_name = get_network_name_from_genesis(<span class="kw-2">&amp;</span>genesis, <span class="kw-2">&amp;</span>state_manager).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>network_name = get_network_name_from_genesis(<span class="kw-2">&amp;</span>genesis_header, <span class="kw-2">&amp;</span>state_manager)<span class="question-mark">?</span>;
 
     <span class="macro">info!</span>(<span class="string">&quot;Using network :: {}&quot;</span>, get_actual_chain_name(<span class="kw-2">&amp;</span>network_name));
 
@@ -801,16 +794,18 @@
         config
     };
 
+    <span class="kw">let </span>peer_manager = Arc::new(PeerManager::default());
+    services.spawn(peer_manager.clone().peer_operation_event_loop_task());
     <span class="kw">let </span>genesis_cid = <span class="kw-2">*</span>genesis_header.cid();
     <span class="comment">// Libp2p service setup
     </span><span class="kw">let </span>p2p_service = Libp2pService::new(
         config.network.clone(),
         Arc::clone(<span class="kw-2">&amp;</span>chain_store),
+        peer_manager.clone(),
         net_keypair,
         <span class="kw-2">&amp;</span>network_name,
         genesis_cid,
-    )
-    .<span class="kw">await</span>;
+    );
 
     <span class="kw">let </span>network_rx = p2p_service.network_receiver();
     <span class="kw">let </span>network_send = p2p_service.network_sender();
@@ -824,12 +819,12 @@
         MpoolConfig::load_config(<span class="kw-2">&amp;</span>db)<span class="question-mark">?</span>,
         Arc::clone(state_manager.chain_config()),
         <span class="kw-2">&amp;mut </span>services,
-    )
-    .<span class="kw">await</span><span class="question-mark">?</span>;
+    )<span class="question-mark">?</span>;
 
     <span class="kw">let </span>mpool = Arc::new(mpool);
 
-    <span class="comment">// For consensus types that do mining, create a component to submit their proposals.
+    <span class="comment">// For consensus types that do mining, create a component to submit their
+    // proposals.
     </span><span class="kw">let </span>submitter = SyncGossipSubmitter::new(
         network_name.clone(),
         network_send.clone(),
@@ -845,10 +840,11 @@
     <span class="kw">let </span>chain_muxer = ChainMuxer::new(
         Arc::new(consensus),
         Arc::clone(<span class="kw-2">&amp;</span>state_manager),
-        Arc::clone(<span class="kw-2">&amp;</span>mpool),
+        peer_manager,
+        mpool.clone(),
         network_send.clone(),
         network_rx,
-        Arc::new(genesis),
+        Arc::new(Tipset::from(genesis_header)),
         chain_muxer_tipset_sink,
         tipset_stream,
         config.sync.clone(),
@@ -881,7 +877,9 @@
                     sync_state,
                     network_send,
                     network_name,
-                    beacon: rpc_state_manager.beacon_schedule(), <span class="comment">// TODO: the RPCState can fetch this itself from the StateManager
+                    beacon: rpc_state_manager.beacon_schedule(), <span class="comment">/* TODO: the RPCState can fetch
+                                                                  * this itself from the
+                                                                  * StateManager */
                     </span>chain_store: rpc_chain_store,
                     new_mined_block_tx: tipset_sink,
                 }),
@@ -962,7 +960,8 @@
     }
 }
 
-<span class="doccomment">/// Optionally fetches the snapshot. Returns the configuration (modified accordingly if a snapshot was fetched).
+<span class="doccomment">/// Optionally fetches the snapshot. Returns the configuration (modified
+/// accordingly if a snapshot was fetched).
 </span><span class="kw">async fn </span>maybe_fetch_snapshot(
     should_fetch_snapshot: bool,
     config: Config,
@@ -983,22 +982,25 @@
     }
 }
 
-<span class="doccomment">/// Last resort in case a snapshot is needed. If it is not to be downloaded, this method fails and
-/// exits the process.
+<span class="doccomment">/// Last resort in case a snapshot is needed. If it is not to be downloaded,
+/// this method fails and exits the process.
 </span><span class="kw">async fn </span>prompt_snapshot_or_die(config: <span class="kw-2">&amp;</span>Config) -&gt; anyhow::Result&lt;bool&gt; {
     <span class="kw">if </span>config.client.snapshot_path.is_some() {
         <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="bool-val">false</span>);
     }
-    <span class="kw">let </span>should_download = <span class="kw">if </span>!config.client.download_snapshot &amp;&amp; atty::is(atty::Stream::Stdin) {
+    <span class="kw">let </span>should_download = <span class="kw">if </span>!config.client.auto_download_snapshot &amp;&amp; atty::is(atty::Stream::Stdin)
+    {
+        <span class="kw">let </span>required_size: u64 = snapshot_fetch_size(config).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>required_size = to_size_string(<span class="kw-2">&amp;</span>required_size.into())<span class="question-mark">?</span>;
         Confirm::with_theme(<span class="kw-2">&amp;</span>ColorfulTheme::default())
                 .with_prompt(
-                    <span class="string">&quot;Forest needs a snapshot to sync with the network. Would you like to download one now?&quot;</span>,
+                    <span class="macro">format!</span>(<span class="string">&quot;Forest needs a snapshot to sync with the network. Would you like to download one now? Required disk space {required_size}.&quot;</span>),
                 )
                 .default(<span class="bool-val">false</span>)
                 .interact()
                 .unwrap_or_default()
     } <span class="kw">else </span>{
-        config.client.download_snapshot
+        config.client.auto_download_snapshot
     };
 
     <span class="kw">if </span>should_download {
@@ -1049,30 +1051,70 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;rocksdb&quot;</span>)]
-</span><span class="kw">fn </span>open_db(config: <span class="kw-2">&amp;</span>Config) -&gt; anyhow::Result&lt;forest_db::rocks::RocksDb&gt; {
-    forest_db::rocks::RocksDb::open(db_path(config), <span class="kw-2">&amp;</span>config.rocks_db).map_err(Into::into)
+<span class="kw">fn </span>create_keystore(config: <span class="kw-2">&amp;</span>Config) -&gt; anyhow::Result&lt;KeyStore&gt; {
+    <span class="kw">let </span>passphrase = std::env::var(FOREST_KEYSTORE_PHRASE_ENV);
+    <span class="kw">let </span>is_interactive = atty::is(atty::Stream::Stdin);
+
+    <span class="comment">// encrypted keystore, headless
+    </span><span class="kw">if </span>config.client.encrypt_keystore &amp;&amp; passphrase.is_err() &amp;&amp; !is_interactive {
+        <span class="macro">anyhow::bail!</span>(<span class="string">&quot;Passphrase for the keystore was not provided and the encryption was not explicitly disabled. Please set the {FOREST_KEYSTORE_PHRASE_ENV} environmental variable and re-run the command&quot;</span>);
+    <span class="comment">// encrypted keystore, either headless or interactive, passphrase provided
+    </span>} <span class="kw">else if </span>config.client.encrypt_keystore &amp;&amp; passphrase.is_ok() {
+        <span class="kw">let </span>passphrase = passphrase.unwrap();
+
+        <span class="kw">let </span>keystore = KeyStore::new(KeyStoreConfig::Encrypted(
+            PathBuf::from(<span class="kw-2">&amp;</span>config.client.data_dir),
+            passphrase,
+        ));
+
+        keystore.map_err(|<span class="kw">_</span>| <span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;Incorrect passphrase. Please verify the {FOREST_KEYSTORE_PHRASE_ENV} environmental variable.&quot;</span>))
+    <span class="comment">// encrypted keystore, interactive, passphrase not provided
+    </span>} <span class="kw">else if </span>config.client.encrypt_keystore &amp;&amp; passphrase.is_err() &amp;&amp; is_interactive {
+        <span class="kw">loop </span>{
+            <span class="macro">print!</span>(<span class="string">&quot;Enter the keystore passphrase: &quot;</span>);
+            std::io::stdout().flush()<span class="question-mark">?</span>;
+
+            <span class="kw">let </span>passphrase = read_password()<span class="question-mark">?</span>;
+
+            <span class="kw">let </span>data_dir = PathBuf::from(<span class="kw-2">&amp;</span>config.client.data_dir).join(ENCRYPTED_KEYSTORE_NAME);
+            <span class="kw">if </span>!data_dir.exists() {
+                <span class="macro">print!</span>(<span class="string">&quot;Confirm passphrase: &quot;</span>);
+                std::io::stdout().flush()<span class="question-mark">?</span>;
+
+                <span class="kw">if </span>passphrase != read_password()<span class="question-mark">? </span>{
+                    <span class="macro">error!</span>(<span class="string">&quot;Passphrases do not match. Please retry.&quot;</span>);
+                    <span class="kw">continue</span>;
+                }
+            }
+
+            <span class="kw">let </span>key_store_init_result = KeyStore::new(KeyStoreConfig::Encrypted(
+                config.client.data_dir.clone(),
+                passphrase,
+            ));
+
+            <span class="kw">match </span>key_store_init_result {
+                <span class="prelude-val">Ok</span>(ks) =&gt; <span class="kw">break </span><span class="prelude-val">Ok</span>(ks),
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
+                    <span class="macro">error!</span>(<span class="string">&quot;Incorrect passphrase entered. Please try again.&quot;</span>)
+                }
+            };
+        }
+    } <span class="kw">else </span>{
+        <span class="macro">warn!</span>(<span class="string">&quot;Warning: Keystore encryption disabled!&quot;</span>);
+        <span class="prelude-val">Ok</span>(KeyStore::new(KeyStoreConfig::Persistent(
+            config.client.data_dir.clone(),
+        ))<span class="question-mark">?</span>)
+    }
 }
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;paritydb&quot;</span>)]
-</span><span class="kw">fn </span>open_db(config: <span class="kw-2">&amp;</span>Config) -&gt; anyhow::Result&lt;forest_db::parity_db::ParityDb&gt; {
-    <span class="kw">use </span>forest_db::parity_db::<span class="kw-2">*</span>;
-    ParityDb::open(db_path(config), <span class="kw-2">&amp;</span>config.parity_db)
-}
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;rocksdb&quot;</span>)]
-</span><span class="kw">type </span>Db = forest_db::rocks::RocksDb;
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;paritydb&quot;</span>)]
-</span><span class="kw">type </span>Db = forest_db::parity_db::ParityDb;
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
-    <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>forest_blocks::BlockHeader;
     <span class="kw">use </span>forest_db::MemoryDB;
     <span class="kw">use </span>forest_networks::ChainConfig;
     <span class="kw">use </span>fvm_shared::address::Address;
+
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>import_snapshot_from_file_valid() -&gt; anyhow::Result&lt;()&gt; {
@@ -1105,42 +1147,44 @@
 
     <span class="kw">async fn </span>import_snapshot_from_file(file_path: <span class="kw-2">&amp;</span>str) -&gt; anyhow::Result&lt;()&gt; {
         <span class="kw">let </span>db = MemoryDB::default();
-        <span class="kw">let </span>cs = Arc::new(ChainStore::new(db).<span class="kw">await</span>);
+        <span class="kw">let </span>chain_config = Arc::new(ChainConfig::default());
+
         <span class="kw">let </span>genesis_header = BlockHeader::builder()
             .miner_address(Address::new_id(<span class="number">0</span>))
             .timestamp(<span class="number">7777</span>)
             .build()<span class="question-mark">?</span>;
-        cs.set_genesis(<span class="kw-2">&amp;</span>genesis_header)<span class="question-mark">?</span>;
-        <span class="kw">let </span>chain_config = Arc::new(ChainConfig::default());
-        <span class="kw">let </span>sm = Arc::new(
-            StateManager::new(
-                cs,
-                chain_config,
-                Arc::new(forest_interpreter::RewardActorMessageCalc),
-            )
-            .<span class="kw">await</span><span class="question-mark">?</span>,
-        );
+
+        <span class="kw">let </span>cs = Arc::new(ChainStore::new(db, chain_config.clone(), <span class="kw-2">&amp;</span>genesis_header)<span class="question-mark">?</span>);
+        <span class="kw">let </span>sm = Arc::new(StateManager::new(
+            cs,
+            chain_config,
+            Arc::new(forest_interpreter::RewardActorMessageCalc),
+        )<span class="question-mark">?</span>);
         import_chain::&lt;<span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>sm, file_path, <span class="prelude-val">None</span>, <span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="comment">// FIXME: This car file refers to actors that are not available in FVM yet.
-    //        See issue: https://github.com/ChainSafe/forest/issues/1452
-    // #[async_std::test]
-    // async fn import_chain_from_file() {
-    //     let db = Arc::new(MemoryDB::default());
-    //     let cs = Arc::new(ChainStore::new(db));
-    //     let genesis_header = BlockHeader::builder()
-    //         .miner_address(Address::new_id(0))
-    //         .timestamp(7777)
-    //         .build()
-    //         .unwrap();
-    //     cs.set_genesis(&amp;genesis_header).unwrap();
-    //     let sm = Arc::new(StateManager::new(cs).await.unwrap());
-    //     import_chain::&lt;FullVerifier, _&gt;(&amp;sm, &quot;test_files/chain4.car&quot;, Some(0), false)
-    //         .await
-    //         .expect(&quot;Failed to import chain&quot;);
-    // }
-</span>}
+    <span class="attr">#[tokio::test]
+    </span><span class="kw">async fn </span>import_chain_from_file() -&gt; anyhow::Result&lt;()&gt; {
+        <span class="kw">let </span>db = MemoryDB::default();
+        <span class="kw">let </span>chain_config = Arc::new(ChainConfig::default());
+        <span class="kw">let </span>genesis_header = BlockHeader::builder()
+            .miner_address(Address::new_id(<span class="number">0</span>))
+            .timestamp(<span class="number">7777</span>)
+            .build()<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>cs = Arc::new(ChainStore::new(db, chain_config.clone(), <span class="kw-2">&amp;</span>genesis_header)<span class="question-mark">?</span>);
+        <span class="kw">let </span>sm = Arc::new(StateManager::new(
+            cs,
+            chain_config,
+            Arc::new(forest_interpreter::RewardActorMessageCalc),
+        )<span class="question-mark">?</span>);
+        import_chain::&lt;<span class="kw">_</span>&gt;(<span class="kw-2">&amp;</span>sm, <span class="string">&quot;test_files/chain4.car&quot;</span>, <span class="prelude-val">None</span>, <span class="bool-val">false</span>)
+            .<span class="kw">await
+            </span>.expect(<span class="string">&quot;Failed to import chain&quot;</span>);
+
+        <span class="prelude-val">Ok</span>(())
+    }
+}
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>

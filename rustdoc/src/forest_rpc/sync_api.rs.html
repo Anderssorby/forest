@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/rpc/src/sync_api.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>sync_api.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-918aaffdca2f1bdb.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-94f39d4346842c1e.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-a211dbb005fb8161.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../forest_rpc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `node/rpc/src/sync_api.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>sync_api.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f2fc7b5fd698d27d.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-5f7299aa2b503fb1.css"><link rel="stylesheet" disabled href="../../static.files/dark-dfb18ef8114bb428.css"><link rel="stylesheet" disabled href="../../static.files/ayu-4047a6aaddd3789d.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-02cbe07fc548e88c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../forest_rpc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -199,18 +199,23 @@
 <a href="#199" id="199">199</a>
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 ChainSafe Systems
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 ChainSafe Systems
 // SPDX-License-Identifier: Apache-2.0, MIT
+</span><span class="attr">#![allow(clippy::unused_async)]
 
 </span><span class="kw">use </span>forest_beacon::Beacon;
 <span class="kw">use </span>forest_chain_sync::SyncState;
 <span class="kw">use </span>forest_json::cid::CidJson;
-<span class="kw">use </span>forest_rpc_api::data_types::{RPCState, RPCSyncState};
-<span class="kw">use </span>forest_rpc_api::sync_api::<span class="kw-2">*</span>;
+<span class="kw">use </span>forest_rpc_api::{
+    data_types::{RPCState, RPCSyncState},
+    sync_api::<span class="kw-2">*</span>,
+};
 <span class="kw">use </span>fvm_ipld_blockstore::Blockstore;
-
 <span class="kw">use </span>jsonrpc_v2::{Data, Error <span class="kw">as </span>JsonRpcError, Params};
-<span class="kw">use </span>tokio::sync::RwLock;
+<span class="kw">use </span>parking_lot::RwLock;
 
 <span class="doccomment">/// Checks if a given block is marked as bad.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>sync_check_bad&lt;DB, B&gt;(
@@ -222,7 +227,7 @@
     B: Beacon,
 {
     <span class="kw">let </span>(CidJson(cid),) = params;
-    <span class="prelude-val">Ok</span>(data.bad_blocks.peek(<span class="kw-2">&amp;</span>cid).<span class="kw">await</span>.unwrap_or_default())
+    <span class="prelude-val">Ok</span>(data.bad_blocks.peek(<span class="kw-2">&amp;</span>cid).unwrap_or_default())
 }
 
 <span class="doccomment">/// Marks a block as bad, meaning it will never be synced.
@@ -236,15 +241,12 @@
 {
     <span class="kw">let </span>(CidJson(cid),) = params;
     data.bad_blocks
-        .put(cid, <span class="string">&quot;Marked bad manually through RPC API&quot;</span>.to_string())
-        .<span class="kw">await</span>;
+        .put(cid, <span class="string">&quot;Marked bad manually through RPC API&quot;</span>.to_string());
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="comment">// TODO SyncIncomingBlocks (requires websockets)
-
-</span><span class="kw">async fn </span>clone_state(state: <span class="kw-2">&amp;</span>RwLock&lt;SyncState&gt;) -&gt; SyncState {
-    state.read().<span class="kw">await</span>.clone()
+<span class="kw">async fn </span>clone_state(state: <span class="kw-2">&amp;</span>RwLock&lt;SyncState&gt;) -&gt; SyncState {
+    state.read().clone()
 }
 
 <span class="doccomment">/// Returns the current status of the `ChainSync` process.
@@ -261,7 +263,8 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span>std::{sync::Arc, time::Duration};
+
     <span class="kw">use </span>forest_beacon::{BeaconPoint, BeaconSchedule, MockBeacon};
     <span class="kw">use </span>forest_blocks::{BlockHeader, Tipset};
     <span class="kw">use </span>forest_chain::ChainStore;
@@ -275,12 +278,13 @@
     <span class="kw">use </span>fvm_ipld_encoding::Cbor;
     <span class="kw">use </span>fvm_shared::address::Address;
     <span class="kw">use </span>serde_json::from_str;
-    <span class="kw">use </span>std::{sync::Arc, time::Duration};
     <span class="kw">use </span>tokio::{sync::RwLock, task::JoinSet};
+
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="kw">const </span>TEST_NET_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;test&quot;</span>;
 
-    <span class="kw">async fn </span>state_setup() -&gt; (
+    <span class="kw">fn </span>state_setup() -&gt; (
         Arc&lt;RPCState&lt;MemoryDB, MockBeacon&gt;&gt;,
         flume::Receiver&lt;NetworkMessage&gt;,
     ) {
@@ -292,21 +296,24 @@
         <span class="kw">let </span>(network_send, network_rx) = flume::bounded(<span class="number">5</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>services = JoinSet::new();
         <span class="kw">let </span>db = MemoryDB::default();
-        <span class="kw">let </span>cs_arc = Arc::new(ChainStore::new(db.clone()).<span class="kw">await</span>);
+        <span class="kw">let </span>chain_config = Arc::new(ChainConfig::default());
+
         <span class="kw">let </span>genesis_header = BlockHeader::builder()
             .miner_address(Address::new_id(<span class="number">0</span>))
             .timestamp(<span class="number">7777</span>)
             .build()
             .unwrap();
+
+        <span class="kw">let </span>cs_arc = Arc::new(ChainStore::new(db, chain_config.clone(), <span class="kw-2">&amp;</span>genesis_header).unwrap());
+
         cs_arc.set_genesis(<span class="kw-2">&amp;</span>genesis_header).unwrap();
         <span class="kw">let </span>state_manager = Arc::new(
             StateManager::new(
                 cs_arc.clone(),
-                Arc::new(ChainConfig::default()),
+                chain_config,
                 Arc::new(forest_interpreter::RewardActorMessageCalc),
             )
-            .<span class="kw">await
-            </span>.unwrap(),
+            .unwrap(),
         );
         <span class="kw">let </span>state_manager_for_thread = state_manager.clone();
         <span class="kw">let </span>cs_for_test = cs_arc.clone();
@@ -315,10 +322,10 @@
         <span class="kw">let </span>pool = {
             <span class="kw">let </span>bz = hex::decode(<span class="string">&quot;904300e80781586082cb7477a801f55c1f2ea5e5d1167661feea60a39f697e1099af132682b81cc5047beacf5b6e80d5f52b9fd90323fb8510a5396416dd076c13c85619e176558582744053a3faef6764829aa02132a1571a76aabdc498a638ea0054d3bb57f41d82015860812d2396cc4592cdf7f829374b01ffd03c5469a4b0a9acc5ccc642797aa0a5498b97b28d90820fedc6f79ff0a6005f5c15dbaca3b8a45720af7ed53000555667207a0ccb50073cd24510995abd4c4e45c1e9e114905018b2da9454190499941e818201582012dd0a6a7d0e222a97926da03adb5a7768d31cc7c5c2bd6828e14a7d25fa3a608182004b76616c69642070726f6f6681d82a5827000171a0e4022030f89a8b0373ad69079dbcbc5addfe9b34dce932189786e50d3eb432ede3ba9c43000f0001d82a5827000171a0e4022052238c7d15c100c1b9ebf849541810c9e3c2d86e826512c6c416d2318fcd496dd82a5827000171a0e40220e5658b3d18cd06e1db9015b4b0ec55c123a24d5be1ea24d83938c5b8397b4f2fd82a5827000171a0e4022018d351341c302a21786b585708c9873565a0d07c42521d4aaf52da3ff6f2e461586102c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001a5f2c5439586102b5cd48724dce0fec8799d77fd6c5113276e7f470c8391faa0b5a6033a3eaf357d635705c36abe10309d73592727289680515afd9d424793ba4796b052682d21b03c5c8a37d94827fecc59cdc5750e198fdf20dee012f4d627c6665132298ab95004500053724e0&quot;</span>).unwrap();
             <span class="kw">let </span>header = BlockHeader::unmarshal_cbor(<span class="kw-2">&amp;</span>bz).unwrap();
-            <span class="kw">let </span>ts = Tipset::new(<span class="macro">vec!</span>[header]).unwrap();
+            <span class="kw">let </span>ts = Tipset::from(header);
             <span class="kw">let </span>db = cs_for_test.blockstore();
             <span class="kw">let </span>tsk = ts.key().cids.clone();
-            cs_for_test.set_heaviest_tipset(Arc::new(ts)).<span class="kw">await</span>.unwrap();
+            cs_for_test.set_heaviest_tipset(Arc::new(ts)).unwrap();
 
             <span class="kw">for </span>i <span class="kw">in </span>tsk {
                 <span class="kw">let </span>bz2 = bz.clone();
@@ -335,8 +342,7 @@
                 Arc::clone(state_manager_for_thread.chain_config()),
                 <span class="kw-2">&amp;mut </span>services,
             )
-            .<span class="kw">await
-            </span>.unwrap()
+            .unwrap()
         };
         <span class="kw">let </span>(new_mined_block_tx, <span class="kw">_</span>) = flume::bounded(<span class="number">5</span>);
         <span class="kw">let </span>state = Arc::new(RPCState {
@@ -344,7 +350,7 @@
             keystore: Arc::new(RwLock::new(KeyStore::new(KeyStoreConfig::Memory).unwrap())),
             mpool: Arc::new(pool),
             bad_blocks: Default::default(),
-            sync_state: Arc::new(RwLock::new(Default::default())),
+            sync_state: Arc::new(parking_lot::RwLock::new(Default::default())),
             network_send,
             network_name: TEST_NET_NAME.to_owned(),
             chain_store: cs_for_chain,
@@ -356,7 +362,7 @@
 
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>set_check_bad() {
-        <span class="kw">let </span>(state, <span class="kw">_</span>) = state_setup().<span class="kw">await</span>;
+        <span class="kw">let </span>(state, <span class="kw">_</span>) = state_setup();
 
         <span class="kw">let </span>cid: CidJson =
             from_str(<span class="string">r#&quot;{&quot;/&quot;:&quot;bafy2bzacea3wsdh6y3a36tb3skempjoxqpuyompjbmfeyf34fi3uy6uue42v4&quot;}&quot;#</span>)
@@ -378,7 +384,7 @@
 
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>sync_state_test() {
-        <span class="kw">let </span>(state, <span class="kw">_</span>) = state_setup().<span class="kw">await</span>;
+        <span class="kw">let </span>(state, <span class="kw">_</span>) = state_setup();
 
         <span class="kw">let </span>st_copy = state.sync_state.clone();
 
@@ -388,8 +394,8 @@
         }
 
         <span class="comment">// update cloned state
-        </span>st_copy.write().<span class="kw">await</span>.set_stage(SyncStage::Messages);
-        st_copy.write().<span class="kw">await</span>.set_epoch(<span class="number">4</span>);
+        </span>st_copy.write().set_stage(SyncStage::Messages);
+        st_copy.write().set_epoch(<span class="number">4</span>);
 
         <span class="kw">match </span>sync_state(Data(state.clone())).<span class="kw">await </span>{
             <span class="prelude-val">Ok</span>(ret) =&gt; {
@@ -401,4 +407,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_rpc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (b70baa4f9 2022-12-14)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="forest_rpc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (e972bc808 2023-01-29)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-a43118d2dfb2799d.js" data-settings-css="settings-7c23ac01f615ce90.css" ></div></body></html>
